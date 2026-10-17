@@ -391,15 +391,29 @@ between seeds.
 
 **Moment 1**
 
-- _What I asked for:_
-- _What came back:_
-- _What I changed:_
+- _What I asked for:_ To label the news articles based on my definitions and
+  my 30 cold-labelled posts.
+- _What came back:_ It pre-labelled every remaining article. I read each and
+  every one of them and found discrepancies, which showed me my label
+  definitions were ambiguous (for example, what counts as an "agency" and
+  what counts as an "action").
+- _What I changed:_ I rewrote the definitions, then had the labels checked
+  against the new definitions. The AI listed the rows that conflicted with
+  them, and I decided each one myself. 16 rows changed label, including one
+  of my cold rows (the Michigan fraud arrest).
 
 **Moment 2**
 
-- _What I asked for:_
-- _What came back:_
-- _What I changed:_
+- _What I asked for:_ Eight example news posts sitting on my label
+  boundaries, for me to label as a stress test.
+- _What came back:_ It gave me the eight posts. I labelled them myself, and it
+  checked my labels against my own written rules. Three didn't match what my
+  rules said, or made me hesitate: a steel company's layoffs, a regulator
+  fining an insurer, and a central bank holding interest rates.
+- _What I changed:_ I didn't change my labels. I refined the definitions
+  instead: an agency acting on fraud is `Administrative`, holding rates to
+  fight inflation counts as an action, and I wrote a rule for `Business` vs
+  `Economy`.
 
 **Pre-labelling disclosure:** 193 of 223 rows were pre-labelled by an AI,
 given my definitions and my 30 cold labels as examples. I read every one of
