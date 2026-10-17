@@ -352,15 +352,31 @@ the conditions of an economy (jobs, trade, prices, inflation) make it
 
 <!-- Your starting model, your settings, and anything you changed and why. -->
 
-**Base model:**
+**Base model:** `distilbert-base-uncased`, trained on an NVIDIA GeForce RTX
+5070 Laptop GPU (CUDA).
 
 **Settings:** <!-- epochs, learning rate, batch size, seed -->
+3 epochs, learning rate 2e-5, batch size 16, max 128 tokens per post, seed 42.
 
-**Anything I changed from the defaults, and why:**
+**Anything I changed from the defaults, and why:** Nothing. Only `LABELS`
+was set to my four labels: `Business`, `Economy`, `Administrative`,
+`None of These`.
 
 **Split sizes:** <!-- train / val / test, and per-label counts in the test
 split. If a label had fewer than about 8 in test, say so — it explains a lot
 of next unit's variance. -->
+train 155 · val 34 · test 34.
+
+| Label | In the test split |
+|---|---|
+| `Business` | 20 |
+| `None of These` | 5 |
+| `Economy` | 5 |
+| `Administrative` | 4 |
+
+Three of my four labels have fewer than 8 test examples (`Economy` 5,
+`None of These` 5, `Administrative` 4), so their scores will move a lot
+between seeds.
 
 ---
 
