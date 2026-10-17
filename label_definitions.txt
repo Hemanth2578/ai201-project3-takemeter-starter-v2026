@@ -3,7 +3,7 @@
 # Copy these from your README so the baseline is judged on exactly the
 # definitions you wrote. baseline.py reads this file.
 
-Business: News about companies or businesses, including transactions, restructuring, mergers, credit ratings, analyst ratings, stock forecasts, and financial fraud involving companies or money.
-Economy: News about the macroeconomy of a country, state, or the world.
-Administrative: Actions or measures taken by government agencies or public officials in response to social issues.
-None of These: News that does not fit any of the categories above.
+Business: News about companies or businesses, including transactions, restructuring, mergers, credit ratings, analyst ratings, stock forecasts, and financial fraud involving companies or money, plus stock, commodity-futures and crypto price moves.
+Economy: News about real-world economic conditions of a country, state, or the world, such as supply and production, trade, jobs, wages, cost of living and inflation.
+Administrative: Actions or measures taken by an agency, such as a government office or public official, a nonprofit, a community organization, or an HOA.
+None of These: An article that reports no company news, no economic conditions and no agency action, such as elections and campaigns, a story about one individual, or a non-finance topic like sports, entertainment or gardening.

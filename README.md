@@ -82,7 +82,8 @@ article is what it is about, so the labels sort by topic.
 
 **Definition:** News about companies or businesses, including transactions,
 restructuring, mergers, credit ratings, analyst ratings, stock forecasts, and
-financial fraud involving companies or money.
+financial fraud involving companies or money, plus market-trading news (stock,
+commodity-futures and crypto price moves).
 
 **Example 1:**
 
@@ -97,7 +98,9 @@ financial fraud involving companies or money.
 
 ### `Economy`
 
-**Definition:** News about the macroeconomy of a country, state, or the world.
+**Definition:** News about real-world economic conditions of a country, state,
+or the world: supply and production, trade, jobs, wages, cost of living and
+inflation.
 
 **Example 1:**
 
@@ -113,8 +116,8 @@ financial fraud involving companies or money.
 
 ### `Administrative`
 
-**Definition:** Actions or measures taken by government agencies or public
-officials in response to social issues.
+**Definition:** Actions or measures taken by an agency — a government office
+or public official, a nonprofit, a community organization, or an HOA.
 
 **Example 1:**
 
@@ -130,7 +133,16 @@ officials in response to social issues.
 
 ### `None of These`
 
-**Definition:** News that does not fit any of the categories above.
+**Definition:** An article that reports no company news, no economic
+conditions and no agency action — which covers elections and campaigns
+(candidates, parties, PACs, debates, campaign ads), stories about one
+individual (a lottery winner, an athlete's opinion), and non-finance topics
+(sports, entertainment, gardening, software alerts, ads, listings, or pages
+with no article in them).
+
+Campaign groups, parties and PACs are not agencies, so their spending or ads
+stay `None of These`. An official acting *in office* is an agency action and
+goes to `Administrative`.
 
 **Example 1:**
 
@@ -161,6 +173,76 @@ without saying anything about the economy itself.
 <!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
      if the tone is heated." -->
 
+If the article says an agency is taking an action, it is `Administrative` —
+always, even if the article also says the economy improves because of it. An
+agency means a government office or public official, a nonprofit, a community
+organization, or an HOA. The economic effect only decides the label when no
+agency action is reported.
+
+**What counts as an action:** a step an agency takes to make amendments,
+resolve an issue, or address a concern — passing, approving, restricting,
+funding, ordering, or launching something for that purpose. These are *not*
+actions:
+
+- A view or preference. "Fed's Hammack … favors more restrictive policy" is a
+  suggestion until a decision is taken, so it stays `Economy`.
+- Describing a situation. Russia's Deputy PM Novak describing oil stuck at
+  Hormuz, with no step taken to fix it, stays `Economy`.
+- Describing how policies play politically. "How Trump's economic policies are
+  giving Democrats a new…" is campaign politics, so `None of These`.
+- Announcing someone else's action. "Town of Vinton announces plans for
+  Wawa": the town only says Wawa is coming; the action is a new business
+  opening, so `Business`.
+- A meeting. "Security Council Meets on UN Verification Mission in Colombia"
+  reports a meeting, not a decision, so `None of These`.
+- A demand or an endorsement. "Republican, Democratic senators call on Trump
+  to end diesel deal" and the League of Women Voters supporting a library tax
+  levy ask for a step without taking one, so both are `Economy`.
+- Reporting activity. "Gateway Development reports busy pipeline" lists site
+  visits and proposals, not a step to fix anything, so `Economy`.
+- A proposed ballot measure. Voters haven't acted yet, so it is labelled by
+  what it is about: Prop 45 (deadlines for housing, water and energy
+  projects) is `Economy`; Oklahoma State Question 845 (how the judicial
+  nominating commission is formed) is `None of These`.
+- An award, or a notice that a body was formed. A bicycle-friendly award to a
+  company's office is `None of These`; a notice of incorporation is
+  `Business`.
+
+**These *are* actions:**
+
+- Acting on fraud or wrongdoing. When a regulator fines a company, a sheriff
+  arrests a suspect, or a court orders a party, it is `Administrative`, even
+  though `Business` covers fraud. Fraud news with no agency acting (a law
+  firm's class-action notice, an allegation, a report) stays `Business`.
+- Deciding to keep something unchanged, when the decision is made to address
+  a concern. A central bank holding interest rates to fight inflation is
+  `Administrative`.
+
+### Second boundary: `Business` vs `Economy`
+
+**The decision rule:** if one or more *named* companies are at the centre of
+the article — their deal, results, rating, stock move, product, opening or
+closing — it is `Business`, even when the article also talks about the wider
+economy. Market-trading news is `Business` too, even with no company named:
+stock, commodity-futures and crypto price moves, sector stock updates, and
+market forecasts. `Economy` is for real-world conditions in a country, state
+or the world: supply and production, trade, jobs, wages, cost of living and
+inflation.
+
+"Harlow Steel cuts 900 jobs as the regional construction slowdown deepens" is
+`Business`: the layoffs are the event, and the slowdown is context. "Retail
+sales at the five largest US grocery chains fell 2%" is `Economy`: no company
+is named, and the subject is the sector.
+
+### Decision order
+
+Apply the rules in this order and stop at the first one that fits:
+
+1. An agency takes an action → `Administrative`
+2. Named companies are at the centre, or it is market-trading news → `Business`
+3. Real-world economic conditions of a country, state or the world → `Economy`
+4. Otherwise → `None of These`
+
 ---
 
 ## The Dataset
@@ -184,9 +266,9 @@ The first 30 rows were labelled cold, by me, with no help (`note` = `cold`).
 | Label            | Count | Share |
 | ---------------- | ----- | ----- |
 | `Business`       | 132   | 59%   |
-| `None of These`  | 38    | 17%   |
-| `Economy`        | 34    | 15%   |
-| `Administrative` | 19    | 9%    |
+| `None of These`  | 35    | 16%   |
+| `Economy`        | 30    | 13%   |
+| `Administrative` | 26    | 12%   |
 | **Total**        | 223   | 100%  |
 
 **Three hard cases**
@@ -196,27 +278,61 @@ The first 30 rows were labelled cold, by me, with no help (`note` = `cold`).
 
 **1.**
 
-> _The post:_
+> _The post:_ "Global Hygiene Products Market in 2025 Highlights Key Trends,
+> Market Size, and Regional Developments. Xiamen, Fujian, China — Overall
+> Market Size: According to multiple industry research firms, the global
+> disposable hygiene products market generated approximately RMB 260 billion
+> (about 36 billion USD) in revenue in 2024…"
 >
-> _Could have been:_
+> _Could have been:_ `Business` or `Economy`
 >
-> _I chose, because:_
+> _I chose, because:_ `Business`. It reads like a global, industry-wide
+> figure, which points to `Economy`, but the main point of the article is the
+> business market for these products in 2025: its size, trends and regions,
+> put out from a company's side. It is not about the economic conditions of a
+> country or the world (jobs, prices people pay, trade, inflation).
 
 **2.**
 
-> _The post:_
+> _The post:_ "The 2026 Paris Auto Show. By Nick Carey and Giulio Piovaccari
+> PARIS, Oct 12 (Reuters) — Europe's car industry fought back against rising
+> Chinese competition at the Paris car show on Monday with a wave of new model
+> launches and…"
 >
-> _Could have been:_
+> _Could have been:_ `Business` or `Economy`
 >
-> _I chose, because:_
+> _I chose, because:_ `Business`. It talks about a whole industry, which
+> points to `Economy`, but what it reports is competition in the car market:
+> European carmakers launching new models against Chinese ones. That is
+> companies competing for customers, not the state of an economy. There is
+> nothing in it about jobs, trade, prices or growth.
+
+Both are hard because my Business vs Economy rule doesn't settle them on its
+own: neither names a company at the centre, and neither is market-trading
+news, yet both cover a whole industry. I decided by asking what the article
+reports. Companies' products, sales and competition make it `Business`; only
+the conditions of an economy (jobs, trade, prices, inflation) make it
+`Economy`.
 
 **3.**
 
-> _The post:_
+> _The post:_ "Gateway Development reports busy pipeline, cites housing push.
+> Gateway Development Corporation Executive Director Mike Rooks said the
+> organization has hosted three site visits, received six new requests for
+> proposals and had several properties close in the last …"
 >
-> _Could have been:_
+> _Could have been:_ `Administrative` or `Economy`
 >
-> _I chose, because:_
+> _I chose, because:_ `Economy`. My first call was `Administrative`: a
+> development agency pushing to get properties sold reads like an agency
+> taking action, and the economic side (new jobs, more people for stores, gas
+> stations and schools) is only a knock-on effect, which my rule says never
+> decides the label. But when I pinned down what counts as an action — a step
+> taken to make amendments, resolve an issue or address a concern — this
+> article didn't meet it. It only reports activity: site visits, requests for
+> proposals and property sales. No step to fix anything is described, so it
+> falls back to `Economy`. This is the case that made me write the
+> definition of an action.
 
 ---
 
