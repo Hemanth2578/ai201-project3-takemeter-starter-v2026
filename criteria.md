@@ -51,62 +51,81 @@ whether you hit them:
 
 ---
 
-## 1.
+## 1. `Administrative` F1 is at least 0.60
 
 <!-- Your criterion. It must name a number. -->
 
+`Administrative` has an F1 of at least **0.60** on the held-out test set, in
+every seed.
 
-
-**Why this target:**
-
-
-
----
-
-## 2.
-
-<!-- Your criterion. -->
-
-
-
-**Why this target:**
-
-
+**Why this target:** `Administrative` has the smallest sample size: 26 of 223
+rows, so only about 4 land in each test split.
 
 ---
 
-## 3.
+## 2. Overall accuracy is at least 0.65
 
 <!-- Your criterion. -->
 
+Overall accuracy is at least **0.65** on the held-out test set, in every seed.
 
-
-**Why this target:**
-
-
+**Why this target:** There are hard cases between `Administrative` and
+`Economy`, but the definitions are clearly written, which should give the
+model a better understanding of them, even though the sample size for those
+labels is really small and may not be enough for training. The floor to beat
+is 0.59: 59% of my rows are `Business`, so a model that always guesses
+`Business` scores 0.59 without learning anything. On a test split of about 34
+posts, 0.65 means about 23 correct against 20 for that guesser, so the model
+has to get at least three of the smaller-label posts right that pure
+`Business` guessing would miss. With so few `Administrative` and `Economy`
+examples to learn from, I don't expect much more than that.
 
 ---
 
-## 4.
+## 3. A classmate agrees with my labels at least 70% of the time
 
 <!-- Your criterion. -->
 
+A classmate labels **20** of my 30 cold-labelled articles (`note` = `cold` in
+`labels.csv`) using only the definitions in my README, and agrees with my
+label on at least **70%** of them — at least 14 of the 20.
 
-
-**Why this target:**
-
-
+**Why this target:** The labels divide articles by topic, and I revised the
+definitions to spell out what counts as what (for example, what counts as an
+agency action), so another person labelling the same news articles should
+mostly land on the same labels.
 
 ---
 
-## 5.
+## 4. Every label: at least 3 out of 5 of its posts are predicted correctly
 
 <!-- Your criterion. -->
 
+For every label, at least **3 out of 5** of its test posts are predicted
+correctly (recall of at least **0.60**) on the held-out test set, in every
+seed.
 
+**Why this target:** With well-defined labels the model should get most posts
+right for each label. I set it at 3 out of 5, not higher, because of the
+`Administrative` vs `Economy` hard cases.
 
-**Why this target:**
+---
 
+## 5. No label is predicted for more than 59% of test posts
+
+<!-- Your criterion. -->
+
+No single label is predicted for more than **59%** of the posts in the
+held-out test set, in every seed.
+
+**Why this target:** 59% is `Business`'s real share of my data. Setting the
+cap there means the model can predict `Business` no more often than it really
+appears, so even one extra `Business` guess fails it. Over-predicting
+`Business` is the failure I am most worried about: with 59% of the training
+data in one label, the easiest way for the model to score well is to default
+to it, and every extra `Business` guess is an `Administrative`, `Economy` or
+`None of These` post it failed to learn. This criterion catches that even
+when accuracy looks fine.
 
 
 ---
