@@ -259,7 +259,19 @@ the body was empty, an ID number, or a paywall.
 
 **How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
 Say so plainly — the disclosure is required, not penalised. -->
-The first 30 rows were labelled cold, by me, with no help (`note` = `cold`).
+First I decided on the labels and wrote a definition for each. Using only
+those definitions, I labelled the first 30 rows cold, by myself, with no help
+(`note` = `cold`). I then gave an AI my definitions and my 30 cold labels as
+examples and had it pre-label the remaining 193 rows. I read every one of
+those 193 labels myself (`note` = `pre-labelled by AI, checked`).
+
+While writing the decision rules, I reviewed the labels against them with AI
+help: it listed rows that conflicted with a rule, and I decided each one. 16
+rows changed label this way, and each is marked in `note` as `relabelled X ->
+Y under revised rule`. One of them is a cold row: "Chinese national accused of
+$1M nationwide fraud scheme arrested in Michigan" was my cold `Fraud` label
+(merged into `Business`) and became `Administrative` once I decided that an
+agency acting on fraud is `Administrative`.
 
 **Counts per label:**
 
@@ -373,7 +385,11 @@ of next unit's variance. -->
 - _What came back:_
 - _What I changed:_
 
-**Pre-labelling disclosure:**
+**Pre-labelling disclosure:** 193 of 223 rows were pre-labelled by an AI,
+given my definitions and my 30 cold labels as examples. I read every one of
+them, and they are marked `pre-labelled by AI, checked` in the `note` column. 16 rows were later relabelled after
+an AI-assisted check against my decision rules, with every final label
+decided by me; those rows say so in `note`.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
