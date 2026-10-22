@@ -433,22 +433,85 @@ decided by me; those rows say so in `note`.
 <!-- Both models on the same posts. `python baseline.py --trained results.json`
      prints this table for you. -->
 
-| Measure          | Baseline | Trained | Difference |
-| ---------------- | -------- | ------- | ---------- |
-| Overall accuracy |          |         |            |
-| Macro F1         |          |         |            |
-| F1 — `label_one` |          |         |            |
-| F1 — `label_two` |          |         |            |
+I ran the baseline twice on the same 34 held-out posts: once with my label
+definitions (`label_definitions.txt`, the default) and once with the bare
+label names only.
+
+**Baseline with my definitions** (`baseline_results.json`):
+
+| Measure | Baseline | Trained | Difference |
+|---|---|---|---|
+| Overall accuracy | 0.147 | 0.588 | +0.441 |
+| Macro F1 | 0.079 | 0.185 | +0.106 |
+| F1 — `Administrative` | 0.222 | 0.000 | -0.222 |
+| F1 — `Business` | 0.095 | 0.741 | +0.646 |
+| F1 — `Economy` | 0.000 | 0.000 | +0.000 |
+| F1 — `None of These` | 0.000 | 0.000 | +0.000 |
+
+**Baseline with bare label names** (`baseline_results_bare.json`):
+
+| Measure | Baseline | Trained | Difference |
+|---|---|---|---|
+| Overall accuracy | 0.735 | 0.588 | -0.147 |
+| Macro F1 | 0.483 | 0.185 | -0.297 |
+| F1 — `Administrative` | 0.333 | 0.000 | -0.333 |
+| F1 — `Business` | 0.870 | 0.741 | -0.129 |
+| F1 — `Economy` | 0.727 | 0.000 | -0.727 |
+| F1 — `None of These` | 0.000 | 0.000 | +0.000 |
+
+The gap between the two baseline runs is what my definitions were worth to
+the zero-shot model: 0.147 − 0.735 = **−0.588** accuracy.
 
 **What I predicted before I looked:**
 
 <!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
      prediction made afterwards isn't one. -->
 
+I expect my trained model to beat the baseline on the `Economy` vs
+`Administrative` labels, as this is the hard case in my data, and also to
+perform very well on labelling the `Business` posts.
+
 **What the gap actually means:**
 
 <!-- If the baseline matched your trained model, your fine-tuning added
      nothing — and that is a real finding, not a failure. Say it plainly. -->
+
+The baseline with my definitions did worse than my trained model, whereas
+the baseline with bare label names fared better than my trained model. This
+means either my labels are not good and/or the current training method is
+not up to the mark.
+
+My prediction was half right. On `Business` the trained model beat the
+definitions baseline (0.741 vs 0.095) but lost to the bare-names baseline
+(0.741 vs 0.870). On `Economy` and `Administrative` it was wrong: the trained
+model scored 0.000 on both, while the definitions baseline found all 4
+`Administrative` posts (F1 0.222) and the bare-names baseline scored 0.333 on
+`Administrative` and 0.727 on `Economy`.
+
+With my definitions, the baseline labelled 32 of 34 posts `Administrative`,
+including 19 of 20 `Business` posts and all 5 `Economy` posts. Reviewing
+`baseline_results.json`, some of these are genuine boundary cases (e.g.
+"NOTICE OF INCORPORATION OF HOUSING AUTHORITY OF THE VILLAGE OF DECATUR" or
+"Rosen Law Firm Encourages Barclays PLC Investors to Inquire About Securities
+Class Action"), but others have no agency in them at all (e.g. "HCLTech
+Reports Strong Q2; Deal Bookings $3.3B" or "Freddy's Frozen Custard &
+Steakburgers Opens 600th Restaurant"). My `Administrative` definition starts
+"Actions or measures taken by an agency…", and almost every news story
+describes someone taking an action. The definition doesn't say that a
+company's action is excluded, and "agency" is stretched to cover nonprofits
+and community organizations, so the zero-shot model matched it to companies
+opening, buying and reporting results too. So the ambiguity is in how my
+`Administrative` definition is worded: it is broad enough to cover almost any
+article.
+
+With bare label names, the same model got 0.735 accuracy and 0.727 `Economy`
+F1, so the four categories themselves can be told apart. The problem the
+definitions run shows is in the wording of my definitions, not in the
+categories.
+
+My trained model predicted `Business` for all 34 posts, so the gap with the
+baselines is mainly a training problem: it learned to guess the majority
+label (59% of my data) instead of learning my categories.
 
 ---
 

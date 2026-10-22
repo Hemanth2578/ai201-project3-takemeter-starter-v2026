@@ -1,0 +1,210 @@
+{
+  "model": "facebook/bart-large-mnli",
+  "n": 34,
+  "seed": 42,
+  "held_out": true,
+  "used_definitions": false,
+  "scores": {
+    "n": 34,
+    "accuracy": 0.7352941176470589,
+    "f1_macro": 0.48254281949934125,
+    "per_label": {
+      "Administrative": {
+        "precision": 0.5,
+        "recall": 0.25,
+        "f1": 0.3333333333333333,
+        "support": 4
+      },
+      "Business": {
+        "precision": 0.7692307692307693,
+        "recall": 1.0,
+        "f1": 0.8695652173913044,
+        "support": 20
+      },
+      "Economy": {
+        "precision": 0.6666666666666666,
+        "recall": 0.8,
+        "f1": 0.7272727272727272,
+        "support": 5
+      },
+      "None of These": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 5
+      }
+    }
+  },
+  "predictions": [
+    {
+      "text": "Bitcoin Miner Fees Fall to Just 0.64% of Revenue, Analyst Says. Transaction fees averaged just 0.64% of Bitcoin miner revenue in the last 30 days, according to analyst Axel Adler Jr.And with BTC oscillating between $83,000 and $84,000, mine",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "The Rising Cost Of Water. As Americans grapple with a widespread affordability crisis, it seems even water is not immune to economic pressures \u2014 in fact, it\u2019s getting more expensive more quickly than other basic needs. A new report finds that over the past 10 years, the cost of household drinking water increased faster than the cost of groceries, faster than inflation, and faster than household income. The report was produced by Food and Water Watch, an advocacy organization that campaigns for clean water, increased food access, and other environmental causes. On average, the cost of drinking water increased 62 percent \u2014 but this number blurs enormous state-by-state variations. It went down 2 percent in Shreveport, La., between 2015 and 2025 and increased more than 300 percent for customers of Oregon\u2019s Tualatin Valley Water District. Water bills from the government-owned system in arid, fast-growing Phoenix were among the lowest in the country, at just over $151 annually. It achieves this by keeping rates low for water use at levels up to average indoor household needs and charging more when users exceed them with outdoor water use",
+      "gold": "Economy",
+      "predicted": "Economy"
+    },
+    {
+      "text": "SoftBank invested $20 million in Alibaba in 2000. 14 years later, that tiny stake was ... In 2000, SoftBank\u2019s Masayoshi Son invested $20 million in Alibaba, the Chinese online marketplace founded by Jack Ma. The company had little",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "From gas prices to grocery bills: How Trump's economic policies are giving Democrats a new ... Rising living costs are becoming a focal point for Democrats in the 2026 midterm elections. Many voters are linking these economic pressures to the",
+      "gold": "None of These",
+      "predicted": "Economy"
+    },
+    {
+      "text": "Pickleball facility franchisor files for bankruptcy as founder acknowledges business mistake: 'I own it'. The Picklr's Chapter 11 filing stems from costly lease guarantees on about 40 franchise locations as an investor group commits millions for restructuring",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Global Intelligence Report for Monday, October 12, 2026. You've reached subscriber-only content Unlock expert intelligence: your gateway to exclusive security insights trusted by global leaders Welcome! Log in to stay connected and make the most of your experience. Your membership has expired. Renew now to continue enjoying exclusive benefits and uninterrupted access. Couldn\u2019t find an account with that email address, please sign up. Unlock expert intelligence: your gateway to exclusive security insights trusted by global leaders For general inquiries please email",
+      "gold": "None of These",
+      "predicted": "Business"
+    },
+    {
+      "text": "SEC proposes broader fund cross-trading to cut investor costs. To expand the types of securities eligible for cross-trading by registered funds while introducing additional oversight and disclosure requirements, the SEC has announced a rule change . The Commission last week unveiled a proposed amendment to its Investment Company Act cross-trading rule, seeking to modernize regulations governing transactions between registered funds",
+      "gold": "Administrative",
+      "predicted": "Business"
+    },
+    {
+      "text": "Rosen Law Firm Encourages Barclays PLC Investors to Inquire About Securities Class Action Investigation",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Global Hygiene Products Market in 2025 Highlights Key Trends, Market Size, and Regional Developments. Xiamen, Fujian, China - October 12, 2026 - Overall Market Size: According to multiple industry research firms, the global disposable hygiene products market generated approximately RMB 260 billion (about 36 billion USD) in revenue in 2024, and is expected to exceed RMB 300 billion by 2031. When including broader personal hygiene",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Trump defends Russia diesel deal as legislators from both parties complain. Story audio is generated using AI President Donald Trump on Monday defended a diesel oil deal he made with Russia as legislators from both parties complained the agreement appears to violate US law barring imports of Russian energy until Moscow ends its aggression against Ukraine. Trump said he is",
+      "gold": "Administrative",
+      "predicted": "Administrative"
+    },
+    {
+      "text": "Andy Burnham promises 'serious dialogue' over UK's relationship with EU. PM hails next month\u2019s \u2018reset\u2019 summit as first step to closer ties, but tensions over trade may prove problematic Andy Burnham has promised a \u201cserious dialogue\u201d over the UK\u2019s future place in Europe, saying the existing relationship is \u201cnot good enough\u201d as he framed next month\u2019s Brussels summit as a possible first step to EU membership. The prime minister said Britain must take a \u201cclear-eyed rational look\u201d at its long-term relationship with the bloc to boost economic growth and control immigration, which needed to go beyond Labour\u2019s existing red lines",
+      "gold": "Economy",
+      "predicted": "Business"
+    },
+    {
+      "text": "Andrew Hogan Discusses Future of Fund Finance Market With Structured Credit Investor. Partner Andrew Hogan was interviewed by Structured Credit Investor (subscription required) on the defining features of the next decade of the fund finance market. He discussed building a practice that cuts across fund finance and structured finance and why that\u2019s important in today\u2019s market. \u201cFund finance started as a very simple relationship product that banks offered funds,\u201d Andrew said. \u201cAs the market has matured, more and more participants \u2014 investors, sponsors \u2014 all wanted to come into the space, and that has encouraged real creativity in structures: to see how insurance companies can get involved, to see how non-bank lenders can get involved. At each of those junction points, sponsors, lawyers, and banks needed to come together to create creative solutions for how we can better facilitate new market participants. Structured finance is a key tool that allows investors more used to investing in ABF structures to participate in extremely attractive opportunities.\u201d",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Dan Ahlers Discusses Education, Healthcare, and Data Centers. {KXLG, Dell Rapids, SD}The state of South Dakota has not had a Democratic governor in 47 years, and Dan Ahlers would like to change that. Ahlers is a small business owner and former Democratic legislator from Dell Rapids and advocates better state funding for education, saying it would help lower property taxes in the long run\u2026 Ahlers says there are some areas where state government could do better. One of those areas is health care.. Ahlers ads that he favors economic development for smaller businesses \u2014 not things like hyperscale data centers.. Ahlers is running against incumbent Republican Gov. Larry Rhoden in the November general election",
+      "gold": "None of These",
+      "predicted": "Business"
+    },
+    {
+      "text": "IonQ Stocks Sink 8.7% as $1.3 Billion Deal Tests Shareholder Returns. IonQ (NYSE:IONQ), the quantum-computing and security company, puts a performance condition on $150 million of its proposed Elisity acquisition, while shares fell 8.7% to $36.41 at 12:10 p.m. ET. The maximum bill is $1.3 billion. That makes the conditional payment roughly 11.5% of the totala hurdle for part of the price, but hardly protection for the whole investment. The prize is access to enterprise security budgets. IonQ says Elisity brings more than 100 customer deployments and relationships with corporate security buyers, with closing expected in the fourth quarter, subject to approvals. Those connections could give IonQ a route to customers before quantum computing becomes a mainstream commercial tool. Turning that access into profitable sales is the real test. The valuation picture shows the shares trading 71.48% below the $127.67 GF Value estimate, a striking gap that does not prove the acquisition will pay off. Equity funding also means dilution, with the final impact dependent on issuance terms. IonQ needs to keep Elisity's customers and sell them more products. A bigger customer list only helps shareholders if the business it brings outweighs the cost of issuing more shares",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Social Security October 14 payments: Who gets checks as 2027 COLA forecast hits 3.6%?. Social Security October 14 payments will reach eligible retirees as the 2027 COLA forecast points to a possible 3.6% increase in monthly benefits from January",
+      "gold": "Economy",
+      "predicted": "Economy"
+    },
+    {
+      "text": "Hess Midstream LP Stock 12\u2011Month Price Target Cut to $36, Implies 12% Upside. Less than 1 min read - According to estimates from 6 analysts, Hess Midstream LP stock's average price target has fallen from $37.5 to $36, with forecasts ranging from $30 to $40 per share - Based on the Oct. 9 closing price, the updated target implies approximately 12% potential upside - Consensus rating remains at \u201cSell\u201d across 7 covering analysts, with 0 Buys, 4 Holds and 3 Sells Explore more price target data and ratings for Hess Midstream LP on the Forecasts tab, and track all previous and future analyst recommendations for Hess Midstream LP in the dedicated News Flow. Select reference data provided by FactSet. Copyright",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Full text of Oklahoma State Question 845 set for Nov. 3 vote. If State Question 845 gets a majority \u201cyes\u201d vote on Nov. 3, it will result in a shift in how the state's Judicial Nominating Commission is formed. No longer would its members be required to be equally representative of Oklahoma\u2019s two major political parties, Democratic and Republican. It would also eliminate a prohibition on attorneys and immediate family members of attorneys from being selected to fill at-large vacancies",
+      "gold": "None of These",
+      "predicted": "Business"
+    },
+    {
+      "text": "FootJoy Owner Says Cole Haan Infringed Patents for Golf Shoes. Cole Haan LLC\u2019s spikeless golf shoes infringed patents protecting methods for outsoles, Acushnet Co., the parent company of Footjoy, said in a Massachusetts lawsuit. Cole Haans\u2019s GrandPr\u00f8 All-Day Golf shoes use similar methods as US Patent Nos. 11,019,874 and 12,075,887, Acushnet said Friday in the US District Court for the District of Massachusetts. Acushnet said it warned Cole Haan in August, but the company denied infringement and kept selling the shoes. - The patents protect Acushnet\u2019s VersaTrax technology for providing multi-surface traction solutions, which makes FootJoy shoes stand out in the marketplace, the company said - Acushnet said Cole Haan willfully",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Articles from BBH Capital Partners Private Equity. BBH Capital Partners Private Equity Exits The Granite Group BBH Capital Partners Private Equity (BBHCP) today announced the successful exit of its investment in The Granite Group (Granite), a diversified distributor of plumbing and HVAC products, in connection with Granite\u2019s agreement to be acquired by Watsco, Inc. (",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "OneKey Cuts Off CryptoBilis, Offers Free Wallet Replacements. All OneKey models bought from the reseller between March 1 and Oct. 12 qualify, including used devices. Buyers must apply by Dec. 31. SecurityThe Defiant Team\u2022All OneKey models bought from the reseller between March 1 and Oct. 12 qualify, including used devices. Buyers must apply by Dec. 31",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Russia supplied $21.3 bln worth of energy to Europe in first nine months of 2026. MOSCOW, October 12. /TASS/. Russia supplied $21.3 billion worth of energy resources to Europe in the first nine months of 2026, Deputy Prime Minister Alexander Novak said in an interview with the Vesti news program. \"Regarding 2026, according to the Energy Ministry, $21.3 billion worth of energy resources has already been supplied to Europe in just the first nine months. In other words, despite sanctions restrictions, our energy resources continue to be supplied along specific routes where exceptions have been made,\" he noted. Novak emphasized that Russia continues to fulfill its contractual obligations. \"It is not our fault that the share of exports to the European Union has changed significantly in recent years. However, we are supplying what our European counterparts want,\" he said",
+      "gold": "Economy",
+      "predicted": "Economy"
+    },
+    {
+      "text": "HCLTech Reports Strong Q2; Deal Bookings $3.3B. Less than 1 min read HCLTech said Q2 was strong, driven by record deal bookings of $3.3B. No additional financial details were provided in the release. | # | Detail | AI Analyst View | | 1 | Record deal bookings $3.3B | Signals robust demand and near-term revenue visibility. | | 2 | Strong Q2 cited by company | Positive qualitative read on quarterly performance, though no comps. | Context by AI Analyst This suggests continued momentum in bookings, reinforcing a demand uptrend for HCLTech\u2019s services. A fuller catalyst would require disclosed Q2 revenue/EPS, YoY growth, margins, and guidance tied to the $3.3B backlog. Based on the original press release from HCLTech distributed by PR Newswire. This is an AI-generated summary and may contain inaccuracies. Summary is based on content distributed by PR Newswire. Please verify any important information with the original source. This information is not a recommendation for what you should do personally and does not constitute investment advice",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Rural West communities struggle as price of heating oil rises. The rural communities vulnerable to heating oil prices rises as the weather gets colder",
+      "gold": "Economy",
+      "predicted": "Economy"
+    },
+    {
+      "text": "Prime Day 2 deals - Last chance: Mac mini, AirPods, Apple Watch Series 12, Nomad Find My card, AirTag mounts, more # Apple # Deals # Tech",
+      "gold": "None of These",
+      "predicted": "Administrative"
+    },
+    {
+      "text": "Dubai number plates emerge as collectible assets in digital shift. Dubai\u2019s premium vehicle number plates are increasingly being viewed not only as status symbols but also as alternative collectible assets, as technology platforms seek to formalise a secondary market traditionally driven by personal networks and informal transactions. The trend comes as investor appetite grows for rare",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Judge Orders Trump Administration to Answer for Tree Removals at D.C. Golf Course. During a four-hour hearing, a federal judge demanded answers from the Trump administration about who authorized the removal of hundreds of trees at the East Potomac Golf Links",
+      "gold": "Administrative",
+      "predicted": "Business"
+    },
+    {
+      "text": "Amazon and Nvidia considering AI startup deals: Reports. \u201cTired of the same tired news cycle? Escape to the full unfiltered feed at Whatfinger.com \u2014 America\u2019s Frontline Truth Feed. 85%+ of readers come direct every day.\u201d \u2013 CLICK HERE for the FULL deal. CNBC\u2019s Kate Rooney reports that Amazon and Nvidia are eyeing some AI startups",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "China's Top 10 Second-Hand Machinery Suppliers for Global Buyers. Shenzhen, China - October 12, 2026 - So, who are China\u2019s top 10 suppliers? Honestly, that question needs more than a quick popularity list. Used excavators, loaders, cranes, forklifts, and road equipment can all look pretty similar online. But the real value? It can differ sharply once someone actually inspects the machine.This",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Bluerock Homes Trust (BHM) Announces Fourth Quarter Dividends on Series A Preferred Stock and Series B Preferred Stock",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Freddy's Frozen Custard & Steakburgers Opens 600th Restaurant.",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Wisconsin hemp industry braces for impact from federal ban",
+      "gold": "Administrative",
+      "predicted": "Economy"
+    },
+    {
+      "text": "IonQ to buy cybersecurity firm for up to $1.3B. Search quotes, news & videos Share Article via Facebook Share Article via Twitter Share Article via LinkedIn Share Article via Email IonQ to buy cybersecurity firm for up to $1.3B Watch Morgan Brennan\u2019s full interview with IonQ Chairman and CEO Niccolo de Masi on the Elisity acquisition, quantum computing, and cybersecurity risks",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "NOTICE OF INCORPORATION OF HOUSING AUTHORITY OF THE VILLAGE OF DECATUR NEBRASKA Notice is hereby given that the following Nebraska nonprofit corporation was organized under the laws of the State of \u2026. NOTICE OF INCORPORATION OF HOUSING AUTHORITY OF THE VILLAGE OF DECATUR NEBRASKA Notice is hereby given that the following Nebraska nonprofit corporation was organized under the laws of the State of Nebraska effective September 30, 2026: 1.The name of the nonprofit corporation is HOUSING AUTHORITY OF THE VILLAGE OF DECATUR NEBRASKA. 2.The address of the initial registered agent of the nonprofit corporation is 302 6th Street, Decatur Nebraska 68020 and the initial registered agent at that address is Jolene Troutman. 3.The nonprofit corporation is a public benefit corporation. 4.The incorporator of the corporation is: Jolene Troutman, 302 6th Street, Decatur Nebraska 68020. 5.The nonprofit corporation will have no members. By: HOUSING AUTHORITY OF THE VILLAGE OF DECATUR NEBRASKA Jolene Troutman, Incorporator ZNEZ BCI 10/8/26, 10/15/26, 10/22/26",
+      "gold": "Business",
+      "predicted": "Business"
+    },
+    {
+      "text": "Barings Global Short Duration High Yield Fund declares $0.1223 dividend. Less than 1 min read - Barings Global Short Duration High Yield Fund declares $0.1223/share monthly dividend, in line with previous. Forward yield11.27%- Payable Nov. 2; for shareholders of record Oct. 21; ex-div Oct. 21. - Payable Dec. 1; for shareholders of record Nov. 18; ex-div Nov. 18. - Payable Jan. 4; for shareholders of record Dec. 21; ex-div Dec. 21. See BGH Dividend Scorecard, Yield Chart, & Dividend Growth. Content provided by Seeking Alpha is intended for information purposes only, and that Seeking Alpha does not offer any personalist investment advice and is not a licensed securities dealer, broker, US investment adviser or investment bank",
+      "gold": "Business",
+      "predicted": "Business"
+    }
+  ]
+}
