@@ -63,11 +63,11 @@ feed tags as finance.
 Three distinctions came up again and again in the first 30 articles, and
 each one became a label boundary:
 
-| What I saw in the articles | Boundary it became |
-|---|---|
-| Some articles name a company; others talk about a whole sector or country | `Business` vs `Economy` |
-| Some report a government action; others report its economic effect | `Administrative` vs `Economy` |
-| Some aren't finance news at all (sports, elections, gardening) | `None of These` vs the rest |
+| What I saw in the articles                                                | Boundary it became            |
+| ------------------------------------------------------------------------- | ----------------------------- |
+| Some articles name a company; others talk about a whole sector or country | `Business` vs `Economy`       |
+| Some report a government action; others report its economic effect        | `Administrative` vs `Economy` |
+| Some aren't finance news at all (sports, elections, gardening)            | `None of These` vs the rest   |
 
 ### Why topic, not quality
 
@@ -141,7 +141,7 @@ individual (a lottery winner, an athlete's opinion), and non-finance topics
 with no article in them).
 
 Campaign groups, parties and PACs are not agencies, so their spending or ads
-stay `None of These`. An official acting *in office* is an agency action and
+stay `None of These`. An official acting _in office_ is an agency action and
 goes to `Administrative`.
 
 **Example 1:**
@@ -181,7 +181,7 @@ agency action is reported.
 
 **What counts as an action:** a step an agency takes to make amendments,
 resolve an issue, or address a concern — passing, approving, restricting,
-funding, ordering, or launching something for that purpose. These are *not*
+funding, ordering, or launching something for that purpose. These are _not_
 actions:
 
 - A view or preference. "Fed's Hammack … favors more restrictive policy" is a
@@ -208,7 +208,7 @@ actions:
   company's office is `None of These`; a notice of incorporation is
   `Business`.
 
-**These *are* actions:**
+**These _are_ actions:**
 
 - Acting on fraud or wrongdoing. When a regulator fines a company, a sheriff
   arrests a suspect, or a court orders a party, it is `Administrative`, even
@@ -220,7 +220,7 @@ actions:
 
 ### Second boundary: `Business` vs `Economy`
 
-**The decision rule:** if one or more *named* companies are at the centre of
+**The decision rule:** if one or more _named_ companies are at the centre of
 the article — their deal, results, rating, stock move, product, opening or
 closing — it is `Business`, even when the article also talks about the wider
 economy. Market-trading news is `Business` too, even with no company named:
@@ -367,12 +367,12 @@ split. If a label had fewer than about 8 in test, say so — it explains a lot
 of next unit's variance. -->
 train 155 · val 34 · test 34.
 
-| Label | In the test split |
-|---|---|
-| `Business` | 20 |
-| `None of These` | 5 |
-| `Economy` | 5 |
-| `Administrative` | 4 |
+| Label            | In the test split |
+| ---------------- | ----------------- |
+| `Business`       | 20                |
+| `None of These`  | 5                 |
+| `Economy`        | 5                 |
+| `Administrative` | 4                 |
 
 Three of my four labels have fewer than 8 test examples (`Economy` 5,
 `None of These` 5, `Administrative` 4), so their scores will move a lot
@@ -439,25 +439,25 @@ label names only.
 
 **Baseline with my definitions** (`baseline_results.json`):
 
-| Measure | Baseline | Trained | Difference |
-|---|---|---|---|
-| Overall accuracy | 0.147 | 0.588 | +0.441 |
-| Macro F1 | 0.079 | 0.185 | +0.106 |
-| F1 — `Administrative` | 0.222 | 0.000 | -0.222 |
-| F1 — `Business` | 0.095 | 0.741 | +0.646 |
-| F1 — `Economy` | 0.000 | 0.000 | +0.000 |
-| F1 — `None of These` | 0.000 | 0.000 | +0.000 |
+| Measure               | Baseline | Trained | Difference |
+| --------------------- | -------- | ------- | ---------- |
+| Overall accuracy      | 0.147    | 0.588   | +0.441     |
+| Macro F1              | 0.079    | 0.185   | +0.106     |
+| F1 — `Administrative` | 0.222    | 0.000   | -0.222     |
+| F1 — `Business`       | 0.095    | 0.741   | +0.646     |
+| F1 — `Economy`        | 0.000    | 0.000   | +0.000     |
+| F1 — `None of These`  | 0.000    | 0.000   | +0.000     |
 
 **Baseline with bare label names** (`baseline_results_bare.json`):
 
-| Measure | Baseline | Trained | Difference |
-|---|---|---|---|
-| Overall accuracy | 0.735 | 0.588 | -0.147 |
-| Macro F1 | 0.483 | 0.185 | -0.297 |
-| F1 — `Administrative` | 0.333 | 0.000 | -0.333 |
-| F1 — `Business` | 0.870 | 0.741 | -0.129 |
-| F1 — `Economy` | 0.727 | 0.000 | -0.727 |
-| F1 — `None of These` | 0.000 | 0.000 | +0.000 |
+| Measure               | Baseline | Trained | Difference |
+| --------------------- | -------- | ------- | ---------- |
+| Overall accuracy      | 0.735    | 0.588   | -0.147     |
+| Macro F1              | 0.483    | 0.185   | -0.297     |
+| F1 — `Administrative` | 0.333    | 0.000   | -0.333     |
+| F1 — `Business`       | 0.870    | 0.741   | -0.129     |
+| F1 — `Economy`        | 0.727    | 0.000   | -0.727     |
+| F1 — `None of These`  | 0.000    | 0.000   | +0.000     |
 
 The gap between the two baseline runs is what my definitions were worth to
 the zero-shot model: 0.147 − 0.735 = **−0.588** accuracy.
@@ -531,14 +531,14 @@ label (59% of my data) instead of learning my categories.
 **Three seeds** (`results_three_seeds_before.json`, 34 test posts each:
 20 `Business`, 5 `Economy`, 5 `None of These`, 4 `Administrative`):
 
-| Measure | Seed 42 | Seed 7 | Seed 2024 |
-|---|---|---|---|
-| Accuracy | 0.588 | 0.588 | 0.588 |
-| Macro F1 | 0.185 | 0.185 | 0.185 |
-| F1 — `Business` | 0.741 | 0.741 | 0.741 |
-| F1 — `Economy` | 0.000 | 0.000 | 0.000 |
-| F1 — `Administrative` | 0.000 | 0.000 | 0.000 |
-| F1 — `None of These` | 0.000 | 0.000 | 0.000 |
+| Measure               | Seed 42 | Seed 7 | Seed 2024 |
+| --------------------- | ------- | ------ | --------- |
+| Accuracy              | 0.588   | 0.588  | 0.588     |
+| Macro F1              | 0.185   | 0.185  | 0.185     |
+| F1 — `Business`       | 0.741   | 0.741  | 0.741     |
+| F1 — `Economy`        | 0.000   | 0.000  | 0.000     |
+| F1 — `Administrative` | 0.000   | 0.000  | 0.000     |
+| F1 — `None of These`  | 0.000   | 0.000  | 0.000     |
 
 **Spread across seeds:** 0 points. Accuracy was 0.588 in every seed.
 
@@ -549,12 +549,12 @@ label (59% of my data) instead of learning my categories.
 
 Identical in all three seeds.
 
-| true \ predicted | `Business` | `Economy` | `Administrative` | `None of These` |
-| ---------------- | --- | --- | --- | --- |
-| **`Business`** | 20 | 0 | 0 | 0 |
-| **`Economy`** | 5 | 0 | 0 | 0 |
-| **`Administrative`** | 4 | 0 | 0 | 0 |
-| **`None of These`** | 5 | 0 | 0 | 0 |
+| true \ predicted     | `Business` | `Economy` | `Administrative` | `None of These` |
+| -------------------- | ---------- | --------- | ---------------- | --------------- |
+| **`Business`**       | 20         | 0         | 0                | 0               |
+| **`Economy`**        | 5          | 0         | 0                | 0               |
+| **`Administrative`** | 4          | 0         | 0                | 0               |
+| **`None of These`**  | 5          | 0         | 0                | 0               |
 
 **My biggest off-diagonal number, and what it means:**
 
@@ -605,7 +605,7 @@ be right most of the time.
      data/staff_taxonomy.md, not your own — so every argument below is made
      from those definitions and those decision rules. -->
 
-**Agreement rate:** **_ / 30 = _**%
+**Agreement rate:** **30 / 30 = 100%**
 
 <!-- Nobody grades this number. A 60% who argues every disagreement from the
      stated rules beats a 95% who wrote "staff was right" nine times. Several
@@ -627,27 +627,36 @@ be right most of the time.
      written rule two different ways on 30 posts, that is direct evidence about
      what you did across your own 200. -->
 
-**1.**
-
-> _The post:_
->
-> _Staff said / I said:_
->
-> _My call, and why:_
->
-> _Which pile:_
-
-**2.**
-
-> _The post:_
->
-> _Staff said / I said:_
->
-> _My call, and why:_
->
-> _Which pile:_
+None. I matched staff on all 30 posts, so there is nothing to adjudicate or
+sort into piles.
 
 **What the pattern in my disagreements tells me:**
+
+With no disagreements, the question is whether the set was easy or the rules
+are tight. I think it is both.
+
+The set was easy in places. The posts arrive grouped by label (sp_001–010
+are all `analysis`, sp_011–020 all `hot_take`, sp_021–030 all `reaction`),
+so the order alone could cue the labels. sp_014 ("Times are down about 3%
+since the shoe rules changed, so obviously the shoes are the whole story") is
+close to the taxonomy's own worked example under rule 1. And the three
+labels look very different on the page: `analysis` posts cite splits and
+percentages, `hot_take` posts are one-line claims, and `reaction` posts are
+first-person and in the moment.
+
+The rules are also tight where it matters. Staff say several posts were
+picked because they are ambiguous, and rule 1 ("does the fact carry the
+argument?") settles the ones with a number in them. sp_014 has a statistic
+but the statistic is decoration, so it is `hot_take`. sp_011 has "once a
+month", but that is a threshold the writer chose, not evidence, so it is
+`hot_take` too.
+
+What this says about my own 223 labels: I can apply clear written rules
+consistently. My own taxonomy only reached that level of clarity after I
+rewrote its rules (what counts as an agency, what counts as an action, the
+`Business` vs `Economy` rule), and 16 rows changed label as a result. So my
+own labels are consistent with the final rules, but they weren't with the
+first version of my definitions.
 
 ---
 
