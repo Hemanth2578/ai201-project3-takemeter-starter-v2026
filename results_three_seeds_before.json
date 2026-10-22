@@ -1,0 +1,209 @@
+[
+  {
+    "seed": 42,
+    "n_test": 34,
+    "accuracy": 0.5882352941176471,
+    "f1_macro": 0.18518518518518517,
+    "per_label": {
+      "Business": {
+        "precision": 0.5882352941176471,
+        "recall": 1.0,
+        "f1": 0.7407407407407407,
+        "support": 20
+      },
+      "Economy": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 5
+      },
+      "Administrative": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 4
+      },
+      "None of These": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 5
+      }
+    },
+    "confusion": {
+      "Business": {
+        "Business": 20,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      },
+      "Economy": {
+        "Business": 5,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      },
+      "Administrative": {
+        "Business": 4,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      },
+      "None of These": {
+        "Business": 5,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      }
+    },
+    "confidence": {
+      "mean_when_right": 0.5850813388824463,
+      "mean_when_wrong": 0.5035946369171143,
+      "accuracy_most_confident_third": 1.0,
+      "accuracy_least_confident_third": 0.09090909090909091,
+      "n_per_third": 11
+    },
+    "device": "cuda",
+    "device_name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+    "torch_version": "2.14.1+cu130",
+    "max_length": 128
+  },
+  {
+    "seed": 7,
+    "n_test": 34,
+    "accuracy": 0.5882352941176471,
+    "f1_macro": 0.18518518518518517,
+    "per_label": {
+      "Business": {
+        "precision": 0.5882352941176471,
+        "recall": 1.0,
+        "f1": 0.7407407407407407,
+        "support": 20
+      },
+      "Economy": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 5
+      },
+      "Administrative": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 4
+      },
+      "None of These": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 5
+      }
+    },
+    "confusion": {
+      "Business": {
+        "Business": 20,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      },
+      "Economy": {
+        "Business": 5,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      },
+      "Administrative": {
+        "Business": 4,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      },
+      "None of These": {
+        "Business": 5,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      }
+    },
+    "confidence": {
+      "mean_when_right": 0.5182337164878845,
+      "mean_when_wrong": 0.4730818271636963,
+      "accuracy_most_confident_third": 0.9090909090909091,
+      "accuracy_least_confident_third": 0.18181818181818182,
+      "n_per_third": 11
+    },
+    "device": "cuda",
+    "device_name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+    "torch_version": "2.14.1+cu130",
+    "max_length": 128
+  },
+  {
+    "seed": 2024,
+    "n_test": 34,
+    "accuracy": 0.5882352941176471,
+    "f1_macro": 0.18518518518518517,
+    "per_label": {
+      "Business": {
+        "precision": 0.5882352941176471,
+        "recall": 1.0,
+        "f1": 0.7407407407407407,
+        "support": 20
+      },
+      "Economy": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 5
+      },
+      "Administrative": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 4
+      },
+      "None of These": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 5
+      }
+    },
+    "confusion": {
+      "Business": {
+        "Business": 20,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      },
+      "Economy": {
+        "Business": 5,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      },
+      "Administrative": {
+        "Business": 4,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      },
+      "None of These": {
+        "Business": 5,
+        "Economy": 0,
+        "Administrative": 0,
+        "None of These": 0
+      }
+    },
+    "confidence": {
+      "mean_when_right": 0.5365293025970459,
+      "mean_when_wrong": 0.49089381098747253,
+      "accuracy_most_confident_third": 0.9090909090909091,
+      "accuracy_least_confident_third": 0.18181818181818182,
+      "n_per_third": 11
+    },
+    "device": "cuda",
+    "device_name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+    "torch_version": "2.14.1+cu130",
+    "max_length": 128
+  }
+]

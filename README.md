@@ -528,22 +528,46 @@ label (59% of my data) instead of learning my categories.
 | 4.        |        |         |        |           |         |
 | 5.        |        |         |        |           |         |
 
+**Three seeds** (`results_three_seeds_before.json`, 34 test posts each:
+20 `Business`, 5 `Economy`, 5 `None of These`, 4 `Administrative`):
+
+| Measure | Seed 42 | Seed 7 | Seed 2024 |
+|---|---|---|---|
+| Accuracy | 0.588 | 0.588 | 0.588 |
+| Macro F1 | 0.185 | 0.185 | 0.185 |
+| F1 — `Business` | 0.741 | 0.741 | 0.741 |
+| F1 — `Economy` | 0.000 | 0.000 | 0.000 |
+| F1 — `Administrative` | 0.000 | 0.000 | 0.000 |
+| F1 — `None of These` | 0.000 | 0.000 | 0.000 |
+
+**Spread across seeds:** 0 points. Accuracy was 0.588 in every seed.
+
 ### Confusion matrix
 
 <!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
      An image of a matrix earns nothing. -->
 
-| true \ predicted |     |     |     |
-| ---------------- | --- | --- | --- |
-| \*\*\*\*         |     |     |     |
-| \*\*\*\*         |     |     |     |
-| \*\*\*\*         |     |     |     |
+Identical in all three seeds.
+
+| true \ predicted | `Business` | `Economy` | `Administrative` | `None of These` |
+| ---------------- | --- | --- | --- | --- |
+| **`Business`** | 20 | 0 | 0 | 0 |
+| **`Economy`** | 5 | 0 | 0 | 0 |
+| **`Administrative`** | 4 | 0 | 0 | 0 |
+| **`None of These`** | 5 | 0 | 0 | 0 |
 
 **My biggest off-diagonal number, and what it means:**
 
 <!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
      direction. "7 real analysis posts were called hot_take and only 3 went the
      other way" is a direction, not just an error rate. -->
+
+My biggest off-diagonal numbers are 5 (`Economy` → `Business`) and 5
+(`None of These` → `Business`), plus 4 `Administrative` → `Business`, and
+nothing went the other way. The model didn't learn any boundary; it learned
+to predict `Business` for everything, because about 60% of my training data
+is `Business`, so always answering `Business` was the easiest way for it to
+be right most of the time.
 
 ---
 
