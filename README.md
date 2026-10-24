@@ -415,6 +415,27 @@ between seeds.
   fight inflation counts as an action, and I wrote a rule for `Business` vs
   `Economy`.
 
+**Moment 3 (unit 6): choosing the number of epochs**
+
+- _What I asked for:_ Help picking the one improvement for Milestone 5 and
+  carrying it out.
+- _What came back:_ It went through the three options against my diagnosis.
+  Relabelling was ruled out because my agreement checks (30/30 with staff,
+  20/20 with an independent labeller) found no boundary I had applied two
+  ways, and adding 30 posts would need new labelling. That left one training
+  setting. It pointed at my "before" training log: loss was still falling at
+  epoch 3 (about 1.30 → 1.07 in every seed) while the learning rate had
+  decayed to almost zero, so 3 epochs (30 steps) stopped the model before it
+  learned anything beyond guessing `Business`. It suggested 10 epochs (100
+  steps), and said to fix that number before seeing any results, so I
+  wouldn't be tuning against the test set.
+- _What I changed:_ I made only that one change, `EPOCHS` 3 → 10, and kept
+  everything else the same, including the three seeds. I did not try other
+  epoch values after seeing the results. It also helped me spot patterns in
+  my errors afterwards — that `None of These` became the weakest label and
+  that its posts were being called `Administrative` — which is what my
+  What's Still Broken section is built on.
+
 **Pre-labelling disclosure:** 193 of 223 rows were pre-labelled by an AI,
 given my definitions and my 30 cold labels as examples. I read every one of
 them, and they are marked `pre-labelled by AI, checked` in the `note` column. 16 rows were later relabelled after
@@ -814,10 +835,55 @@ seeds — the thin-label effect the notebook warned about in unit 5.
 
 <!-- For each criterion still missed: what you'd do, and why you stopped. -->
 
+After the 10-epoch run, three criteria are still missed. Each one passed in
+at least one seed but not in all three.
+
+**1. `Administrative` F1 ≥ 0.60 — missed (0.800, 0.500, 0.571).**
+*What I'd do:* add about 30 more `Administrative` articles, labelled with the
+same agency-action rule. With only 26 rows, each split has about 18 to train
+on and 4 to test on, so one wrong post moves its F1 by about 0.2, and the
+seeds disagree.
+*Why I stopped:* the milestone allows one change, and I wanted the epochs
+change measured on its own. Adding data at the same time would have made it
+impossible to tell which change did what.
+
+**4. Every label's recall ≥ 0.60 — missed (lowest 0.400, 0.500, 0.200).**
+*What I'd do:* fix `None of These`, which is now my weakest label (recall
+0.20–0.60). It is the only label defined by what it isn't, so its 35 rows
+(sports, elections, gardening, software alerts) share nothing a model can
+learn. I would either give it a positive definition or split out its
+biggest group, elections and campaigns, which is where it collides with
+`Administrative`.
+*Why I stopped:* that is a relabelling of a whole label, a second change on
+top of the epochs one, and it means re-checking 35 rows by hand.
+
+**5. Largest share predicted as one label ≤ 59% — missed (59%, 65%, 71%).**
+*What I'd do:* reduce the pull toward `Business`, either with class weights
+in training or with more posts in the three smaller labels. Seed 2024
+predicted `Business` for 24 of 34 posts, including 2 `Administrative` and 1
+`Economy` post.
+*Why I stopped:* class weights mean changing the training code, not just a
+setting, and more data is the same change as criterion 1. One change was the
+limit.
+
+The common thread: all three are about my small labels having only 4–5 test
+posts per split. That is also why accuracy now moves 0.088 across seeds. A
+larger dataset would help every one of them, and is the single change I'd
+make next.
+
 **The gap between what I meant my labels to capture and what the model
 learned:**
 
 <!-- Two sentences. Your confusion matrix is the evidence. -->
+
+I meant `Administrative` to capture a rule — an agency *taking an action* to
+fix something — but the model seems to have learned a topic instead: in seed
+42, 2 of the 5 `None of These` posts were called `Administrative`, which
+fits a model reacting to government and election words rather than to
+whether an action was taken. And `None of These` never became a category of
+its own for the model: across the three seeds its posts were scattered into
+`Business`, `Economy` and `Administrative`, because "everything else" gave it
+no shared signal to learn.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
