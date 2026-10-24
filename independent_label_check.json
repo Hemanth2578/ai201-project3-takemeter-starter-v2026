@@ -1,0 +1,110 @@
+{
+  "labeller": "fresh AI agent, given only README definitions and decision rules (example posts removed)",
+  "rows_used": "first 20 of 30 cold rows in labels.csv",
+  "compared": 20,
+  "agreed": 20,
+  "agreement_rate": 1.0,
+  "target": ">= 0.70 (14 of 20)",
+  "rows": [
+    {
+      "text": "Chinese national accused of $1M nationwide fraud scheme arrested in Michigan. Allegan County Sheriff's Office/WXMI via CNN Newsource Currently in La Crosse",
+      "mine": "Administrative",
+      "independent": "Administrative"
+    },
+    {
+      "text": "Current Account with Clay Lowery - Episode 160: One Week in Bangkok - Kicking Off the IIF/IMF/World Bank Annual Meetings > The Institute of International Finance. Current Account with Clay Lowery - Episode 160: One Week in Bangkok — Kicking Off the IIF/IMF/World Bank Annual Meetings October 12, 2026 As global financial leaders gather in Bangkok, attention is turning to the opportunities and challenges shaping Thailand and Southeast Asia. In this episode of Current Account, Clay is joined by Randy Thanthong-Knight, Bangkok Bureau Chief at Bloomberg News, to preview the conversations surrounding the IIF Annual Membership Meeting and IMF-World Bank meetings. They explore Thailand’s challenge of generating stronger growth despite a more resilient financial system, the region’s growing importance in global supply chains, and the investment opportunities emerging from EVs, semiconductors, AI, and infrastructure. The conversation also examines how Southeast Asian economies are navigating U.S.-China competition and whether Thailand can capitalize on shifting trade and investment patterns while moving toward its next stage of economic development",
+      "mine": "Economy",
+      "independent": "Economy"
+    },
+    {
+      "text": "Notice is hereby given that GCTT Holdings LLC, a Nebraska Limited Liability Company, has been organized under the laws of the state of Nebraska, with its initial designated office at 212 N Engdahl, …. Notice is hereby given that GCTT Holdings LLC, a Nebraska Limited Liability Company, has been organized under the laws of the state of Nebraska, with its initial designated office at 212 N Engdahl, Oakland, NE 68045. The initial agent for service of process of the Company is Teigan Case 212 N Engdahl, Oakland, NE 68045. ZNEZ BCI 10/1/26, 10/8/26 & 10/15/26",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Fort Bragg council to vote on emergency fix for broken Noyo water line. FORT BRAGG, CA., 10/12/26 — On Tuesday, Oct. 13, city staff will ask the Fort Bragg City Council to declare an emergency so the city can drill a new water pipe under the Noyo River before winter storms. Fort Bragg’s tap water comes from three places: Waterfall Gulch, Newman Gulch and the Noyo River. Some of it reaches the city’s treatment plant on Sherwood Road through a pipe under the Noyo. That pipe broke in September, during construction on the city’s Raw Water Line Replacement Project. Since then, water has crossed the river on a temporary line",
+      "mine": "Administrative",
+      "independent": "Administrative"
+    },
+    {
+      "text": "NOTICE OF ORGANIZATION. Integrity Federal Contracting, LLC. Office street/mailing: 4758 County Road KL, Tekamah, NE 68061. Agent: Adam Beaver, 4758 County Road KL, Tekamah, NE 68061. ZNEZ BCI …. NOTICE OF ORGANIZATION. Integrity Federal Contracting, LLC. Office street/mailing: 4758 County Road KL, Tekamah, NE 68061. Agent: Adam Beaver, 4758 County Road KL, Tekamah, NE 68061. ZNEZ BCI 9/24/26, 10/1/26, 10/8/26",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "NOTICE OF INCORPORATION OF HOUSING AUTHORITY OF THE VILLAGE OF DECATUR NEBRASKA Notice is hereby given that the following Nebraska nonprofit corporation was organized under the laws of the State of …. NOTICE OF INCORPORATION OF HOUSING AUTHORITY OF THE VILLAGE OF DECATUR NEBRASKA Notice is hereby given that the following Nebraska nonprofit corporation was organized under the laws of the State of Nebraska effective September 30, 2026: 1.The name of the nonprofit corporation is HOUSING AUTHORITY OF THE VILLAGE OF DECATUR NEBRASKA. 2.The address of the initial registered agent of the nonprofit corporation is 302 6th Street, Decatur Nebraska 68020 and the initial registered agent at that address is Jolene Troutman. 3.The nonprofit corporation is a public benefit corporation. 4.The incorporator of the corporation is: Jolene Troutman, 302 6th Street, Decatur Nebraska 68020. 5.The nonprofit corporation will have no members. By: HOUSING AUTHORITY OF THE VILLAGE OF DECATUR NEBRASKA Jolene Troutman, Incorporator ZNEZ BCI 10/8/26, 10/15/26, 10/22/26",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Cloudflare Is Maintained at Overweight by Barclays",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Alkami Technology Is Maintained at Equal-Weight by Barclays",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Corn Futures Rise as Market Moves Past WASDE",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Downtown takes a hit on tax revenue. Sign up for the free Great Falls This Week newsletter and stay in the loop on Great Falls city government, public school meetings, business news and upcoming entertainment and events. Good Monday morning. In this week’s newsletter, I try to explain a tax matter that impacts the city’s ability to",
+      "mine": "Economy",
+      "independent": "Economy"
+    },
+    {
+      "text": "Palantir Stocks Slip Despite Barclays' $265 AI Target. Palantir Technologies PLTR, the enterprise and government AI-software company, draws bullish analyst attention, but shares slipped about 1.1% to $206.90 at 12.20pm EST. Wall Street's targets leave plenty of room for disagreement. Barclays' $265 objective implies roughly 28% upside from that price. Goldman's $230 target puts the potential gain closer to 11%. Neither is a promise. Yahoo Finance reported that Barclays initiated coverage with an Overweight rating and the $265 target. The operating numbers explain the focus on U.S. demand: second-quarter U.S. commercial revenue reached $764 million, while U.S. government revenue totaled $809 million. Together, those businesses generated about 81.3% of approximately $1.935 billion in companywide revenue. That concentration gives investors two engines to watch: corporate adoption and government spending. The valuation snapshot puts shares 11.28% above the $185.92 GF Value estimate, suggesting the price already carries a premium to that benchmark. Palantir still has to earn that premium. More contracts help, but the stronger test is whether deployments produce recurring revenue without engineering costs climbing just as quickly. Expanding sovereign demand could widen the opportunity. Turning that demand into repeatable, profitable growth is what makes the bullish targets credible",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Crédit Agricole Agrees to Buy German Bank IKB. Crédit Agricole agreed to buy the German bank IKB Deutsche Industriebank AG as part of its expansion push in Germany. The French banking group on Monday said it reached an agreement with Lone Star Funds to acquire 100% of IKB's share capital, funded with its own resources. Financial terms of the deal weren't disclosed. Crédit Agricole said the acquisition is expected to negatively impact the bank's Common Equity Tier 1 ratio by about 20 basis points at closing. The deal is expected to close by the end of the second quarter. IKB will give Crédit Agricole a strong presence in Germany's mid-corporate banking market and build on its existing expansion push in Germany. \"Germany is at the heart of our European ambitions and a key pillar of our ACT 2028 plan,\" Crédit Agricole Chief Executive Olivier Gavalda said. \"With IKB, we welcome into the Group a franchise of exceptional quality, built on a century of proximity to clients, deep sector expertise and an unwavering commitment to the Mittelstand.\" Write to Elias Schisgall at elias.schisgall@wsj.com",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Absci Price Target Raised to $15.00/Share From $14.00 by JP Morgan",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Amrize Initiated at Buy by Longbow Research",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Meta Stocks Jump 4% as Muse Lands Native Windows Distribution. Meta Platforms (NASDAQ:META), the social-media and AI giant, plans to bring its Muse personal agent to Windows, while shares traded at $747.65, up approximately 4.08% at 11.15am EST on Oct. 12. Microsoft announced the forthcoming native app with Microsoft Execution Containers integration. That gives Meta another route onto the desktop. The business payoff still needs proving. Security is a key piece of the rollout. According to Microsoft's Windows announcement, the containment system lets organizations set boundaries around the files and networks agents can access, with policies enforced as they run. Microsoft called Muse coming soon, without specifying a launch date, pricing or expected user base. Distribution is taking shape. The commercial details remain thin. The valuation chart puts Meta 13.55% below its $864.88 GF Value estimate, suggesting potential upside if that estimate holds. Windows access could expand Muse's reach beyond Meta's existing apps, but availability alone will not produce a return. Investors need evidence of repeat usage, useful tasks completed and a clear path to revenue. More screens open the door. Paying engagement makes the investment case",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Staying home to raise the family? Here's what the working spouse needs to earn in 2026. SmartAsset reports that raising a child costs over $40,000 yearly in some U.S. cities, prompting families to evaluate single vs. dual-income households",
+      "mine": "Economy",
+      "independent": "Economy"
+    },
+    {
+      "text": "Palo Alto Networks Stocks Fall Nearly 4.0% as Neutral Call Tests AI Premium. Palo Alto Networks (NASDAQ:PANW), the enterprise AI-security provider, faces a tough valuation test as Phillip Securities maintains its Neutral stance; shares fell about 3.9% at 12.15pm EST to $402.45. Phillip's October 12 report takes a positive view of software overall but sees Palo Alto's valuation as stretched. The GF Value chart puts the shares 71.26% above its $235 estimate, suggesting investors are already paying for substantial growth. The business has momentum. Palo Alto's fiscal fourth-quarter disclosures show next-generation security annual recurring revenue reached $9.1 billion, up 63% year over year. But the earnings picture needs a closer look: a $282 million GAAP net loss becomes $853 million in adjusted net income. That $1.135 billion difference makes the adjustments central to assessing profitability. Growth alone cannot settle the valuation debate. The company's earnings reconciliation identifies stock compensation, acquisition-related costs and other adjustments that investors need to weigh against operating performance. The next test is execution: retain customers, turn contracted business into revenue and generate cash while keeping dilution in check. AI security offers a powerful growth opportunity. At this price, shareholders need that opportunity to deliver",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Luxury letdown: LVMH misses organic sales expectations due to China weakness. LVMH LVMHF updated investors that third-quarter revenue reached €18.50B, slightly above analysts’ €18.46 billion consensus. Organic sales growth of 1% was reported, down from the 3% pace seen in the second quarter. Strength in the U.S., Europe, and Japan offsets weaker demand in China. Fashion and leather goods, LVMH’s largest division, was the principal area of weakness during the quarter. Revenue totaled €8.25B, with organic sales falling 5%, reversing the second quarter’s 1% growth and missing the consensus expectation for a decline of 1.6%. LVMH LVMHF management pointed to slowing Chinese demand despite continued strength in the U.S. Some bright spots were new collections at Dior and Celine and strong performance at Loro Piana. LVMH's outlook: \"Despite an economic and geopolitical environment that remains uncertain, the Group remains confident and will maintain a strategy focused on continuously enhancing the desirability of its brands, drawing on the authenticity and quality of its products, its excellence in retail, and its agile organization. LVMH will draw on its powerful brands and the talent of its teams to reinforce its global leadership position in luxury goods once again in 2026.\"",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "Intel and Broadcom CEOs Delivers Stark AI Warning as Stocks Tumble. Broadcom (NASDAQ:AVGO) shares fell 1.5% and Intel (NASDAQ:INTC) slid 3% in Monday morning trading as their CEOs warned financing could become a bigger obstacle to AI expansion than chip or power shortages, according to remarks at the DBS Asia Future Forward Conference in Singapore. The concern shifts attention from equipment supply to whether companies can fund data centers, accelerators and power infrastructure while generating returns on investments. Broadcom CEO Hock Tan said constraints, including memory availability and wafer supply, may ease as manufacturing capacity grows. Intel CEO Lip-Bu Tan pointed to borrowing costs and demands for measurable returns. He expects demand to remain healthy over the next two to three years, but longer-term growth will depend on businesses finding practical uses for AI and turning spending into efficiency gains or new revenue. Broadcom's Tan said demand for computing capacity still exceeds supply and could remain tight through 2029 or 2030. However, infrastructure spending may cool if advanced models deliver fewer improvements or commercial adoption disappoints. The industry must balance near-term demand with whether future cash flows can justify the cost of expansion",
+      "mine": "Business",
+      "independent": "Business"
+    },
+    {
+      "text": "IonQ Stocks Sink 8.7% as $1.3 Billion Deal Tests Shareholder Returns. IonQ (NYSE:IONQ), the quantum-computing and security company, puts a performance condition on $150 million of its proposed Elisity acquisition, while shares fell 8.7% to $36.41 at 12:10 p.m. ET. The maximum bill is $1.3 billion. That makes the conditional payment roughly 11.5% of the totala hurdle for part of the price, but hardly protection for the whole investment. The prize is access to enterprise security budgets. IonQ says Elisity brings more than 100 customer deployments and relationships with corporate security buyers, with closing expected in the fourth quarter, subject to approvals. Those connections could give IonQ a route to customers before quantum computing becomes a mainstream commercial tool. Turning that access into profitable sales is the real test. The valuation picture shows the shares trading 71.48% below the $127.67 GF Value estimate, a striking gap that does not prove the acquisition will pay off. Equity funding also means dilution, with the final impact dependent on issuance terms. IonQ needs to keep Elisity's customers and sell them more products. A bigger customer list only helps shareholders if the business it brings outweighs the cost of issuing more shares",
+      "mine": "Business",
+      "independent": "Business"
+    }
+  ]
+}

@@ -522,11 +522,11 @@ label (59% of my data) instead of learning my categories.
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 | --------- | ------ | ------- | ------ | --------- | ------- |
-| 1.        |        |         |        |           |         |
-| 2.        |        |         |        |           |         |
-| 3.        |        |         |        |           |         |
-| 4.        |        |         |        |           |         |
-| 5.        |        |         |        |           |         |
+| 1. `Administrative` F1 | ≥ 0.60 | 0.000 | 0.000 | 0.000 | MISSED |
+| 2. Overall accuracy | ≥ 0.65 | 0.588 | 0.588 | 0.588 | MISSED |
+| 3. Independent labeller agreement on 20 cold rows (revised — see `criteria.md`) | ≥ 70% (14 of 20) | 20 of 20 (100%) — one check, not per seed | — | — | MET |
+| 4. Every label's recall | ≥ 0.60 | 0.000 (lowest) | 0.000 (lowest) | 0.000 (lowest) | MISSED |
+| 5. Largest share predicted as one label | ≤ 59% | 100% `Business` | 100% `Business` | 100% `Business` | MISSED |
 
 **Three seeds** (`results_three_seeds_before.json`, 34 test posts each:
 20 `Business`, 5 `Economy`, 5 `None of These`, 4 `Administrative`):
@@ -578,11 +578,11 @@ be right most of the time.
 
 | #   | Criterion | Target | Verdict | How I decided |
 | --- | --------- | ------ | ------- | ------------- |
-| 1   |           |        |         |               |
-| 2   |           |        |         |               |
-| 3   |           |        |         |               |
-| 4   |           |        |         |               |
-| 5   |           |        |         |               |
+| 1   | `Administrative` F1 | ≥ 0.60 | MISSED | 0.000 in all three seeds; the model never predicted `Administrative` |
+| 2   | Overall accuracy | ≥ 0.65 | MISSED | 0.588 in all three seeds, below 0.65 every time |
+| 3   | Independent labeller agreement on 20 cold rows (revised) | ≥ 70% (14 of 20) | MET | A fresh AI agent with only my README definitions and rules labelled my first 20 cold rows and agreed on 20 of 20 (`independent_label_check.json`) |
+| 4   | Every label's recall | ≥ 0.60 | MISSED | `Business` 1.000, but `Economy`, `Administrative` and `None of These` 0.000 in every seed |
+| 5   | Largest share predicted as one label | ≤ 59% | MISSED | `Business` was predicted for 34 of 34 test posts (100%) in every seed |
 
 **Diagnoses**
 
@@ -594,6 +594,70 @@ be right most of the time.
      ⚠️ Use your agreement report as evidence. It is the only instrument you
      have that can tell a LABELLING problem from a MODEL problem, and this
      section is graded on whether you used it that way. -->
+
+All four misses (criteria 1, 2, 4 and 5) come from one behaviour: in every
+seed the model predicted `Business` for all 34 test posts. So I diagnose the
+cause once, then show how each miss follows from it.
+
+**The cause: too few examples for my small labels, in a lopsided dataset,
+with a very short training run. This is a data and model problem, not a
+labelling one.**
+
+How I know, cause by cause:
+
+- **Too few examples for a label — yes.** Of about 155 training rows, roughly
+  92 are `Business` and only about 18 `Administrative`, 21 `Economy` and 24
+  `None of These`. With 59% of the data in one label, always answering
+  `Business` was the easiest way for the model to be right most of the time,
+  and it never learned anything else.
+- **A boundary I labelled inconsistently — no.** My agreement report is 30/30
+  with staff: I applied written rules the same way every time, including the
+  ambiguous posts with a number in them. If I had applied a boundary two
+  different ways in my own 223 labels, I would expect errors between the two
+  labels on that boundary. My confusion matrix shows none. One caveat: the staff set tests
+  how I apply someone else's rules, and 16 of my own rows changed when I
+  rewrote my rules, so my labels are consistent with my final rules, not
+  necessarily with my first ones.
+- **A genuinely hard label pair — no.** A hard pair would show up as errors
+  between those two labels, for example `Economy` posts called
+  `Administrative`. My confusion matrix has zero errors between any of the
+  three smaller labels. Every error goes into `Business`, so the model never
+  got as far as the `Economy` vs `Administrative` boundary.
+- **A task the model can't reach from this much data — partly.** The task
+  itself is learnable: the zero-shot baseline with bare label names got
+  0.735 accuracy and 0.727 `Economy` F1 without any training. But my
+  fine-tuned model had about 155 training rows and only 30 training steps
+  (155 rows ÷ batch 16, × 3 epochs). That was not enough to move it past
+  guessing the majority label.
+
+The three seeds were identical (0.588 accuracy each time), so this is a
+consistent behaviour, not noise from one unlucky split.
+
+How each miss follows:
+
+1. **`Administrative` F1 0.000 (target ≥ 0.60).** `Administrative` is my
+   smallest label (about 18 training rows, 4 test posts). All 4 test posts
+   were called `Business`.
+2. **Accuracy 0.588 (target ≥ 0.65).** 0.588 is exactly the share of
+   `Business` posts in the test split (20 of 34): the score of a model that
+   always guesses `Business`, which is the floor I set this target against.
+3. **Independent labeller agreement — MET, 20 of 20.** I had no classmate,
+   so I revised the labeller (not the 70% target) in `criteria.md`: a fresh
+   AI agent that had never seen my labels got only my README definitions and
+   rules and labelled my first 20 cold rows. It agreed with me on all 20.
+   This is weaker evidence than it looks: 15 of the 20 are `Business`, many
+   of them easy analyst-rating headlines; two of my rules were written from
+   these exact rows (the fraud-arrest rule from row 1, "a notice of
+   incorporation is `Business`" from row 6); and an AI applies my rules
+   literally, where a person might not. What it does show is that my written
+   rules are specific enough for a reader with no other context to reach my
+   labels, which supports the conclusion above that the misses are not a
+   labelling problem.
+4. **Every label's recall (target ≥ 0.60).** `Business` recall was 1.000; the
+   other three were 0.000, because none of their posts was ever predicted.
+5. **Largest predicted share 100% (target ≤ 59%).** This is the failure this
+   criterion was written to catch: the model defaulted to the majority label
+   for every post.
 
 ---
 

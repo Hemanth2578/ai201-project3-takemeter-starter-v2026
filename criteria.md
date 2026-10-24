@@ -95,6 +95,19 @@ definitions to spell out what counts as what (for example, what counts as an
 agency action), so another person labelling the same news articles should
 mostly land on the same labels.
 
+> **Revised in unit 6:** An independent labeller who has never seen my
+> labels — a fresh AI agent given only the definitions and decision rules
+> from my README, with the example posts removed — labels the **first 20**
+> of my 30 cold-labelled articles, and agrees with my label on at least
+> **70%** of them (at least 14 of 20).
+>
+> **Why revised:** I had no classmate available, so as written the criterion
+> could not be checked. The target (70%) is unchanged; only the labeller is.
+> An AI agent is a weaker check than a person: it applies my rules
+> literally, and an AI also pre-labelled 193 of my rows, so it may share
+> their tendencies. I used the first 20 cold rows rather than choosing them,
+> so I couldn't pick easy ones.
+
 ---
 
 ## 4. Every label: at least 3 out of 5 of its posts are predicted correctly
