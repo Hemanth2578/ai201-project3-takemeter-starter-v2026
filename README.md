@@ -726,24 +726,87 @@ first version of my definitions.
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** One training setting: `EPOCHS` from 3 to **10**. Nothing
+else changed — same `labels.csv`, same base model, learning rate 2e-5,
+batch size 16, 128 tokens, and the same three seeds (42, 7, 2024), so the
+same three splits. `RUN_LABEL` was set to `"after"`, and the results are in
+`results_three_seeds_after.json`. I picked 10 before seeing any "after"
+numbers and did not try other values, so I wasn't tuning against the test
+set.
 
-**Which diagnosis pointed at it:**
+**Which diagnosis pointed at it:** My diagnosis named a training run that was
+too short: 155 rows at batch 16 for 3 epochs is only 30 training steps. In
+the "before" run, training loss was still falling at epoch 3 (about 1.30 →
+1.07 in every seed) while the learning rate had decayed to almost zero, so
+the model stopped before it learned anything beyond guessing `Business`. My
+agreement checks (30/30 with staff, 20/20 with an independent labeller)
+ruled out relabelling a boundary, so a training setting was the change the
+diagnosis pointed at. 10 epochs gives 100 training steps instead of 30.
 
 ### Run Log — After
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 | --------- | ------ | ------- | ------ | --------- | ------- |
-| 1.        |        |         |        |           |         |
-| 2.        |        |         |        |           |         |
-| 3.        |        |         |        |           |         |
-| 4.        |        |         |        |           |         |
-| 5.        |        |         |        |           |         |
+| 1. `Administrative` F1 | ≥ 0.60 | 0.800 | 0.500 | 0.571 | MISSED |
+| 2. Overall accuracy | ≥ 0.65 | 0.882 | 0.853 | 0.794 | MET |
+| 3. Independent labeller agreement on 20 cold rows (revised) | ≥ 70% (14 of 20) | 20 of 20 (100%) — one check, not per seed | — | — | MET |
+| 4. Every label's recall | ≥ 0.60 | 0.400 (`None of These`) | 0.500 (`Administrative`) | 0.200 (`None of These`) | MISSED |
+| 5. Largest share predicted as one label | ≤ 59% | 59% `Business` (20 of 34) | 65% `Business` (22 of 34) | 71% `Business` (24 of 34) | MISSED |
+
+**Three seeds, after:**
+
+| Measure | Seed 42 | Seed 7 | Seed 2024 | Spread |
+|---|---|---|---|---|
+| Overall accuracy | 0.882 | 0.853 | 0.794 | 0.088 |
+| Macro F1 | 0.812 | 0.751 | 0.635 | 0.177 |
+| F1 — `Business` | 0.950 | 0.952 | 0.909 | 0.043 |
+| F1 — `Economy` | 1.000 | 0.800 | 0.727 | 0.273 |
+| F1 — `Administrative` | 0.800 | 0.500 | 0.571 | 0.300 |
+| F1 — `None of These` | 0.500 | 0.750 | 0.333 | 0.417 |
+
+**Confusion matrix, after (seed 42):**
+
+| true \ predicted | `Business` | `Economy` | `Administrative` | `None of These` |
+|---|---|---|---|---|
+| **`Business`** | 19 | 0 | 0 | 1 |
+| **`Economy`** | 0 | 5 | 0 | 0 |
+| **`Administrative`** | 0 | 0 | 4 | 0 |
+| **`None of These`** | 1 | 0 | 2 | 2 |
+
+**Before vs after, side by side:**
+
+| Measure | Before (3 epochs) | After (10 epochs) |
+|---|---|---|
+| Accuracy (seeds 42 / 7 / 2024) | 0.588 / 0.588 / 0.588 | 0.882 / 0.853 / 0.794 |
+| Macro F1 | 0.185 / 0.185 / 0.185 | 0.812 / 0.751 / 0.635 |
+| Labels the model ever predicts | `Business` only | all four |
+| Criteria met (of 5) | 1 (criterion 3) | 2 (criteria 2 and 3) |
 
 **Did it help, and how do I know:**
 
 <!-- If it didn't, say so. Relabelling that didn't help is a genuinely
      interesting result and earns full credit. -->
+
+Yes, it helped a lot, and it confirms the diagnosis. With the same data and
+the same splits, the only change — more training steps — took accuracy from
+0.588 in every seed to 0.794–0.882, and macro F1 from 0.185 to 0.635–0.812.
+The model stopped predicting `Business` for everything: in seed 42 it found
+all 5 `Economy` posts and all 4 `Administrative` posts. Criterion 2
+(accuracy) moved from MISSED to MET. All three seeds now also beat the
+bare-names baseline (0.735 accuracy, 0.483 macro F1), which the "before"
+model did not.
+
+It did not fix everything. Criteria 1, 4 and 5 are still MISSED, because
+each has to hold in all three seeds: `Administrative` F1 cleared 0.60 in seed
+42 (0.800) but not in seeds 7 and 2024; the predicted `Business` share was
+within 59% only in seed 42. `None of These` is now my weakest label (recall
+0.20–0.60), and in seed 42 two of its posts were called `Administrative`.
+
+The spread also got bigger: accuracy now moves 0.088 across seeds and
+`None of These` F1 moves 0.417. Before, the spread was 0 only because the
+model gave the same answer every time. Now that it is actually learning the
+small labels, their 4–5 test posts per split make their scores jump between
+seeds — the thin-label effect the notebook warned about in unit 5.
 
 ---
 
