@@ -26,6 +26,8 @@ What a caller gets back:
     404  {"error": ...}                no such route
     413  {"error": ...}                body over 1 MB
     500  {"error": ...}                the model failed; our mistake
+
+Every one of those writes a record to logs/classify.jsonl (see runlog.py).
 """
 
 import argparse
@@ -38,6 +40,7 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from classify import MODEL_DIR, Classifier, InputError, ModelNotFound
+from runlog import LOG_PATH, RunLog
 
 for _stream in (sys.stdout, sys.stderr):
     try:
@@ -63,12 +66,21 @@ class BadRequest(Exception):
         self.http_status = http_status
 
 
+class Server(ThreadingHTTPServer):
+    # http.server turns address reuse on. On Windows that lets a second
+    # serve.py bind a port that is already taken, and the two then split the
+    # requests between them. Off, the second one fails at start-up and says so.
+    allow_reuse_address = False
+    daemon_threads = True
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "TakeMeter/1.0"
     protocol_version = "HTTP/1.1"
 
     # Set once in main(), shared by every request thread.
     classifier = None
+    runlog = None
     model_lock = threading.Lock()
 
     def log_message(self, fmt, *args):
@@ -121,6 +133,8 @@ class Handler(BaseHTTPRequestHandler):
         if "duration_ms" in payload:
             payload["duration_ms"] = record["duration_ms"]
         self._send(http_status, payload)
+        # Written after the response goes out, so duration_ms covers the send.
+        self.runlog.write(record)
 
     def _new_record(self):
         return {
@@ -233,7 +247,15 @@ def main():
     parser.add_argument("--host", default=DEFAULT_HOST)
     parser.add_argument("--port", type=int, default=DEFAULT_PORT)
     parser.add_argument("--model-dir", default=str(MODEL_DIR))
+    parser.add_argument("--log", default=str(LOG_PATH),
+                        help="where the structured log goes (default: logs/classify.jsonl)")
     args = parser.parse_args()
+
+    runlog = Handler.runlog = RunLog(args.log)
+
+    def lifecycle(event, **fields):
+        runlog.write({"ts": now_iso(), "event": event, "host": args.host,
+                      "port": args.port, **fields})
 
     print("Loading the model ...", flush=True)
     load_started = time.perf_counter()
@@ -241,19 +263,26 @@ def main():
         Handler.classifier = Classifier(args.model_dir)
     except ModelNotFound as exc:
         print(f"error: {exc}", file=sys.stderr)
+        lifecycle("startup", status="error", error=str(exc))
         return 1
     load_seconds = time.perf_counter() - load_started
 
     try:
-        server = ThreadingHTTPServer((args.host, args.port), Handler)
+        server = Server((args.host, args.port), Handler)
     except OSError as exc:
-        print(f"error: could not listen on {args.host}:{args.port} ({exc}). "
-              f"Is another serve.py running? Try --port 8001.", file=sys.stderr)
+        message = f"could not listen on {args.host}:{args.port} ({exc})"
+        print(f"error: {message}. Is another serve.py running? Try --port 8001.",
+              file=sys.stderr)
+        lifecycle("startup", status="error", error=message)
         return 1
-    server.daemon_threads = True
 
     c = Handler.classifier
+    lifecycle("startup", status="ok", device=c.device, labels=c.labels,
+              max_length=c.max_length, model_seed=c.meta.get("seed"),
+              model_trained_at=c.meta.get("trained_at"),
+              model_load_ms=round(load_seconds * 1000, 1), error=None)
     print(f"Model loaded in {load_seconds:.1f}s on {c.device}: {', '.join(c.labels)}")
+    print(f"Logging to {runlog.path}")
     print(f"Listening on http://{args.host}:{args.port}   (Ctrl+C to stop)", flush=True)
     try:
         server.serve_forever()
@@ -261,6 +290,7 @@ def main():
         print("\nStopping.")
     finally:
         server.server_close()
+        lifecycle("shutdown", status="ok", error=None)
     return 0
 
 
