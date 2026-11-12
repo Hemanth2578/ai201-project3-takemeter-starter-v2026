@@ -1501,5 +1501,18 @@ drafted these README sections. When criterion 5 came out worse after the
 first improvement, it sent the failing request 60 more times to check
 whether the change had caused it before writing that up.
 
-<!-- TODO before submitting: add what YOU changed or decided after reading
-     the AI's work, e.g. a target or reason you rewrote in criteria.md. -->
+*What I decided myself:*
+
+- Which system to extend. I picked project 3, TakeMeter, out of my four.
+- The shape. I chose C, extend one capability, and gave that as the
+  instruction.
+- To keep the work in this repository and not start a new one. I checked
+  that before going further.
+- How the criteria were made. I chose to base them on my unit 5 criteria
+  with small changes, instead of writing five new ones, and told the AI to
+  do that and carry on.
+- That the work should be committed in small steps, so the history shows
+  the order things happened in.
+
+I did not rewrite the AI's code, criteria wording, diagnoses or write-up
+after it produced them.
