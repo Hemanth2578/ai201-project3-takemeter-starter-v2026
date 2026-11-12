@@ -1504,15 +1504,12 @@ whether the change had caused it before writing that up.
 *What I decided myself:*
 
 - Which system to extend. I picked project 3, TakeMeter, out of my four.
-- The shape. I chose C, extend one capability, and gave that as the
-  instruction.
+- The shape. I chose C, extend one capability, because TakeMeter could
+  train and score itself but could not label a new article.
 - To keep the work in this repository and not start a new one. I checked
-  that before going further.
-- How the criteria were made. I chose to base them on my unit 5 criteria
-  with small changes, instead of writing five new ones, and told the AI to
-  do that and carry on.
+  that before going further, so the extension sits next to what it extends.
+- Where the criteria came from. I decided to base them on my unit 5
+  criteria with small changes, instead of starting from five new ones, so
+  each capstone criterion can be traced back to one I had already tested.
 - That the work should be committed in small steps, so the history shows
-  the order things happened in.
-
-I did not rewrite the AI's code, criteria wording, diagnoses or write-up
-after it produced them.
+  the order things happened in, with the criteria before any result.
