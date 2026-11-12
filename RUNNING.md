@@ -58,9 +58,9 @@ curl -X POST http://127.0.0.1:8000/classify -H "Content-Type: application/json" 
 ```
 
 ```json
-{"request_id": "a69553658239", "label": "Business", "confidence": 0.9143,
- "scores": {"Business": 0.9143, "Economy": 0.0294, "Administrative": 0.025, "None of These": 0.0314},
- "n_tokens": 30, "truncated": false, "duration_ms": 5.12}
+{"request_id": "a29e5489c7b5", "label": "Business", "confidence": 0.8904,
+ "scores": {"Business": 0.8904, "Economy": 0.0374, "Administrative": 0.0307, "None of These": 0.0414},
+ "n_tokens": 13, "truncated": false, "duration_ms": 4.43}
 ```
 
 | Route | What it does |

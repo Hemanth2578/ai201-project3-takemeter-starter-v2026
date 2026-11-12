@@ -965,3 +965,119 @@ PyTorch, which does not fit in the 512 MB of the free hosting tier.
 
 *Size check:* three small files (`train.py`, `classify.py`, `serve.py`) that
 reuse the notebook's own split and training code. No new dependencies.
+
+**Instrumentation**
+
+Every request the endpoint answers writes one record to
+`logs/classify.jsonl`, one JSON object per line. The record is built in
+`Handler._new_record` and written by `Handler._finish` in `serve.py`, which
+calls `RunLog.write` in `runlog.py`. The server also writes a `startup`
+record when it starts, or fails to, and a `shutdown` record when it is
+stopped with Ctrl+C.
+
+| Field | What it holds |
+|---|---|
+| `ts` | When the request arrived, ISO-8601 UTC, to the millisecond |
+| `request_id` | Also sent back to the caller, so a response can be matched to its record |
+| `status`, `http_status` | `ok`, `rejected` (the caller's mistake) or `error` (the model failed), and the HTTP code sent |
+| `input_chars`, `input_preview` | What came in: the length of the text and its first 160 characters |
+| `n_tokens`, `truncated` | How long the text was in tokens, and whether it was cut to the model's 128 |
+| `label`, `confidence`, `scores` | What came out |
+| `tokenize_ms`, `model_ms`, `duration_ms` | How long it took: the two stages, and the whole request |
+| `error` | Why it was rejected or failed; `null` when it was classified |
+
+`python runlog.py` reads the file back as counts and timings, so questions
+like "how many were rejected" or "how slow was the slowest" need no new code.
+
+The entries below are from one real session on 11 November 2026 (the
+timestamps are UTC, so they read 12 November). The full 25-record log is
+committed as `logs/classify.jsonl`.
+
+*The server starting:*
+
+```json
+{"ts": "2026-11-12T00:55:53.922+00:00", "event": "startup", "host": "127.0.0.1", "port": 8000, "status": "ok", "device": "cuda", "labels": ["Business", "Economy", "Administrative", "None of These"], "max_length": 128, "model_seed": 42, "model_trained_at": "2026-11-12T00:44:50+00:00", "model_load_ms": 4760.0, "error": null}
+```
+
+*Ten classified requests.* These are the first ten posts in
+`test_split.csv`, sent with `python send.py --held-out 10`:
+
+```json
+{"ts": "2026-11-12T00:55:54.458+00:00", "request_id": "b0d20328d76a", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 240, "input_preview": "Bitcoin Miner Fees Fall to Just 0.64% of Revenue, Analyst Says. Transaction fees averaged just 0.64% of Bitcoin miner revenue in the last 30 days, according to ", "n_tokens": 67, "truncated": false, "label": "Business", "confidence": 0.9269, "scores": {"Business": 0.9269, "Economy": 0.0222, "Administrative": 0.0193, "None of These": 0.0316}, "tokenize_ms": 2.69, "model_ms": 215.43, "duration_ms": 218.23, "error": null}
+{"ts": "2026-11-12T00:55:54.693+00:00", "request_id": "99cafccfa116", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 1149, "input_preview": "The Rising Cost Of Water. As Americans grapple with a widespread affordability crisis, it seems even water is not immune to economic pressures — in fact, it’s g", "n_tokens": 229, "truncated": true, "label": "Economy", "confidence": 0.401, "scores": {"Business": 0.129, "Economy": 0.401, "Administrative": 0.2279, "None of These": 0.2421}, "tokenize_ms": 1.44, "model_ms": 3.29, "duration_ms": 4.83, "error": null}
+{"ts": "2026-11-12T00:55:54.709+00:00", "request_id": "3abc4e875354", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 230, "input_preview": "SoftBank invested $20 million in Alibaba in 2000. 14 years later, that tiny stake was ... In 2000, SoftBank’s Masayoshi Son invested $20 million in Alibaba, the", "n_tokens": 59, "truncated": false, "label": "Business", "confidence": 0.9332, "scores": {"Business": 0.9332, "Economy": 0.0197, "Administrative": 0.0193, "None of These": 0.0278}, "tokenize_ms": 0.7, "model_ms": 3.63, "duration_ms": 4.43, "error": null}
+{"ts": "2026-11-12T00:55:54.725+00:00", "request_id": "a9452c85736a", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 242, "input_preview": "From gas prices to grocery bills: How Trump's economic policies are giving Democrats a new ... Rising living costs are becoming a focal point for Democrats in t", "n_tokens": 51, "truncated": false, "label": "Administrative", "confidence": 0.3398, "scores": {"Business": 0.1182, "Economy": 0.2303, "Administrative": 0.3398, "None of These": 0.3116}, "tokenize_ms": 0.71, "model_ms": 3.38, "duration_ms": 4.15, "error": null}
+{"ts": "2026-11-12T00:55:54.741+00:00", "request_id": "90d9d42dea0d", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 259, "input_preview": "Pickleball facility franchisor files for bankruptcy as founder acknowledges business mistake: 'I own it'. The Picklr's Chapter 11 filing stems from costly lease", "n_tokens": 50, "truncated": false, "label": "Business", "confidence": 0.9364, "scores": {"Business": 0.9364, "Economy": 0.0207, "Administrative": 0.0175, "None of These": 0.0254}, "tokenize_ms": 0.71, "model_ms": 3.55, "duration_ms": 4.32, "error": null}
+{"ts": "2026-11-12T00:55:54.756+00:00", "request_id": "3447e8d871ff", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 569, "input_preview": "Global Intelligence Report for Monday, October 12, 2026. You've reached subscriber-only content Unlock expert intelligence: your gateway to exclusive security i", "n_tokens": 107, "truncated": false, "label": "None of These", "confidence": 0.3343, "scores": {"Business": 0.2843, "Economy": 0.2245, "Administrative": 0.1569, "None of These": 0.3343}, "tokenize_ms": 0.88, "model_ms": 3.41, "duration_ms": 4.36, "error": null}
+{"ts": "2026-11-12T00:55:54.771+00:00", "request_id": "8d659c71caa3", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 435, "input_preview": "SEC proposes broader fund cross-trading to cut investor costs. To expand the types of securities eligible for cross-trading by registered funds while introducin", "n_tokens": 72, "truncated": false, "label": "Administrative", "confidence": 0.3601, "scores": {"Business": 0.1761, "Economy": 0.2244, "Administrative": 0.3601, "None of These": 0.2394}, "tokenize_ms": 0.78, "model_ms": 3.68, "duration_ms": 4.53, "error": null}
+{"ts": "2026-11-12T00:55:54.787+00:00", "request_id": "6f5b2f4a7585", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 103, "input_preview": "Rosen Law Firm Encourages Barclays PLC Investors to Inquire About Securities Class Action Investigation", "n_tokens": 19, "truncated": false, "label": "Business", "confidence": 0.8956, "scores": {"Business": 0.8956, "Economy": 0.0327, "Administrative": 0.0301, "None of These": 0.0416}, "tokenize_ms": 0.72, "model_ms": 3.47, "duration_ms": 4.27, "error": null}
+{"ts": "2026-11-12T00:55:54.803+00:00", "request_id": "1fea799d44f2", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 432, "input_preview": "Global Hygiene Products Market in 2025 Highlights Key Trends, Market Size, and Regional Developments. Xiamen, Fujian, China - October 12, 2026 - Overall Market ", "n_tokens": 89, "truncated": false, "label": "Business", "confidence": 0.7067, "scores": {"Business": 0.7067, "Economy": 0.1303, "Administrative": 0.0662, "None of These": 0.0968}, "tokenize_ms": 0.94, "model_ms": 3.57, "duration_ms": 4.6, "error": null}
+{"ts": "2026-11-12T00:55:54.819+00:00", "request_id": "640bdc08be25", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 374, "input_preview": "Trump defends Russia diesel deal as legislators from both parties complain. Story audio is generated using AI President Donald Trump on Monday defended a diesel", "n_tokens": 66, "truncated": false, "label": "Administrative", "confidence": 0.3559, "scores": {"Business": 0.1058, "Economy": 0.2445, "Administrative": 0.3559, "None of These": 0.2938}, "tokenize_ms": 0.9, "model_ms": 3.86, "duration_ms": 4.85, "error": null}
+```
+
+*Failed runs.* Four requests the endpoint refused (sent with
+`python send.py --bad`), and one server that could not start because the
+port was already in use:
+
+```json
+{"ts": "2026-11-12T00:55:54.976+00:00", "request_id": "2bcc51967005", "event": "request", "method": "POST", "path": "/classify", "status": "rejected", "http_status": 400, "input_chars": 0, "input_preview": "", "n_tokens": null, "truncated": null, "label": null, "confidence": null, "scores": null, "tokenize_ms": null, "model_ms": null, "duration_ms": 0.06, "error": "'text' is empty"}
+{"ts": "2026-11-12T00:55:55.023+00:00", "request_id": "af4ff5fdc37c", "event": "request", "method": "POST", "path": "/classify", "status": "rejected", "http_status": 400, "input_chars": null, "input_preview": null, "n_tokens": null, "truncated": null, "label": null, "confidence": null, "scores": null, "tokenize_ms": null, "model_ms": null, "duration_ms": 0.11, "error": "body is not valid JSON (Expecting value at character 0)"}
+{"ts": "2026-11-12T00:55:55.087+00:00", "request_id": "60652b641b89", "event": "request", "method": "POST", "path": "/classify", "status": "rejected", "http_status": 413, "input_chars": null, "input_preview": null, "n_tokens": null, "truncated": null, "label": null, "confidence": null, "scores": null, "tokenize_ms": null, "model_ms": null, "duration_ms": 0.04, "error": "body is 1100012 bytes; the limit is 1000000"}
+{"ts": "2026-11-12T00:55:55.103+00:00", "request_id": "66d47c528aa7", "event": "request", "method": "POST", "path": "/label", "status": "rejected", "http_status": 404, "input_chars": null, "input_preview": null, "n_tokens": null, "truncated": null, "label": null, "confidence": null, "scores": null, "tokenize_ms": null, "model_ms": null, "duration_ms": 0.03, "error": "no such route"}
+{"ts": "2026-11-12T00:56:00.313+00:00", "event": "startup", "host": "127.0.0.1", "port": 8000, "status": "error", "error": "could not listen on 127.0.0.1:8000 ([WinError 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted)"}
+```
+
+All 11 bad requests in that session were refused with a 400, 404 or 413 and
+each left a record. Two kinds of failure did **not** happen, so they are not
+shown:
+
+- **No request ended in a 500.** The model never raised on any input, so the
+  `"status": "error"` path has not been exercised by a real failure.
+- **There is no `shutdown` record for this session.** I stopped the server by
+  killing the process, not with Ctrl+C, and a killed process writes nothing.
+  The log shows that as a missing line, which is the kind of gap the log is
+  supposed not to have.
+
+Two things the log showed me that I did not know before I had it:
+
+- The first request took 218.23 ms and the next nine took 4.15 to 4.85 ms.
+  Almost all of the first one is `model_ms` (215.43).
+- The two worked examples in my own taxonomy above come back wrong. "Harlow
+  Steel cuts 900 jobs as the regional construction slowdown deepens" is
+  `Business` by my rule and the model said `Economy` at 0.32 confidence. "Fed
+  holds interest rates steady to fight inflation" is `Administrative` by my
+  rule and the model said `Business` at 0.79.
+
+**What It Costs**
+
+TakeMeter calls no API and buys no tokens, so its real cost is **seconds of
+compute on my own machine**. One run is one `POST /classify` request.
+
+*Measured cost per run: **25.86 ms (0.026 s)**, averaged over ten requests.*
+
+*How I measured it:* I started a fresh server (`python serve.py`), sent the
+first ten held-out posts with `python send.py --held-out 10`, and took the
+`duration_ms` field of those ten records from `logs/classify.jsonl`. That
+field is timed inside the server, from the start of handling the request to
+after the response is sent. The ten values, in order:
+
+| Request | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `duration_ms` | 218.23 | 4.83 | 4.43 | 4.15 | 4.32 | 4.36 | 4.53 | 4.27 | 4.60 | 4.85 |
+
+Sum 258.57 ms ÷ 10 = **25.86 ms**. The average hides two very different
+numbers: the first request after start-up cost 218.23 ms, and the other nine
+averaged 40.34 ÷ 9 = 4.48 ms. Of the 25.86 ms, 24.73 ms is the model and
+1.05 ms is the tokenizer.
+
+Costs that are paid once, not per run: loading the model when the server
+starts took 4.76 s (`model_load_ms` in the `startup` record), and training
+it took 9 s (`python train.py`).
+
+This was measured on an NVIDIA RTX 5070 Laptop GPU. I did not measure it on a
+CPU, where each request will be slower.
+
+*For a hundred people a day,* at one article each: 100 × 0.02586 s =
+**2.6 s of compute a day**. If the server stays up all day, only the first
+of the hundred is a slow one, so it is nearer 218.23 ms + 99 × 4.48 ms =
+0.66 s, plus 4.76 s to load the model once: about 5.4 s a day in total.
