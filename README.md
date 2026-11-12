@@ -922,3 +922,46 @@ no shared signal to learn.
 ---
 
 📖 **How to run this project: [RUNNING.md](RUNNING.md)**
+
+---
+
+## Capstone
+
+Everything below this heading is the capstone unit. The sections above are
+units 5 and 6 and are left as they were.
+
+**The Shape**
+
+*System:* TakeMeter (project 3), the fine-tuned DistilBERT that sorts finance
+news articles into `Business`, `Economy`, `Administrative` and
+`None of These`.
+
+*Shape:* **C — extend one capability.**
+
+*What I'm adding:* a way to classify an article the model has never seen.
+Until now TakeMeter only existed inside `takemeter.ipynb`: it trained, scored
+its own 34 held-out posts, wrote `results.json`, and then the model was
+thrown away (`save_strategy="no"`, and `takemeter_out/` is empty). There was
+no way to hand it a new article and get a label back. The extension is one
+endpoint, `POST /classify`: send it `{"text": "..."}` and it returns one of my
+four labels with the model's confidence. To make that possible the seed-42
+model has to be saved to disk once (`train.py`), and the endpoint loads it
+from there. Every request, good or bad, is written to a structured log.
+
+*Run path:* **Path B — local with logs.** The system loads a 268 MB model and
+PyTorch, which does not fit in the 512 MB of the free hosting tier.
+
+*What is out of scope:*
+
+- **I'm not retraining to fix my three missed criteria from unit 6.** No new
+  articles, no class weights, no extra epochs. The endpoint serves the same
+  seed-42, 10-epoch model that `results.json` describes, weaknesses included
+  (`None of These` recall 0.40).
+- **I'm not touching the taxonomy.** No fifth label, no splitting elections
+  out of `None of These`, no relabelling. `labels.csv` does not change.
+- **I'm not building an interface or a batch mode.** One article per
+  request, JSON in and JSON out. No web page, no CSV upload, no
+  authentication.
+
+*Size check:* three small files (`train.py`, `classify.py`, `serve.py`) that
+reuse the notebook's own split and training code. No new dependencies.
