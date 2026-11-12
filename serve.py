@@ -270,6 +270,12 @@ def main():
         return 1
     load_seconds = time.perf_counter() - load_started
 
+    # The first pass through the model pays a one-time set-up cost (about
+    # 210 ms on the GPU). Pay it here, before listening, so that no caller does.
+    warm_started = time.perf_counter()
+    Handler.classifier.classify("warm-up")
+    warmup_ms = round((time.perf_counter() - warm_started) * 1000, 1)
+
     try:
         server = Server((args.host, args.port), Handler)
     except OSError as exc:
@@ -283,7 +289,8 @@ def main():
     lifecycle("startup", status="ok", device=c.device, labels=c.labels,
               max_length=c.max_length, model_seed=c.meta.get("seed"),
               model_trained_at=c.meta.get("trained_at"),
-              model_load_ms=round(load_seconds * 1000, 1), error=None)
+              model_load_ms=round(load_seconds * 1000, 1), warmup_ms=warmup_ms,
+              error=None)
     print(f"Model loaded in {load_seconds:.1f}s on {c.device}: {', '.join(c.labels)}")
     print(f"Logging to {runlog.path}")
     print(f"Listening on http://{args.host}:{args.port}   (Ctrl+C to stop)", flush=True)
