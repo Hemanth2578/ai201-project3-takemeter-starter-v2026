@@ -1,0 +1,659 @@
+{
+  "label": "after",
+  "run_at": "2026-11-11T20:13:18-0500",
+  "n_trials": 3,
+  "trials": [
+    {
+      "trial": 1,
+      "log": "logs/eval_after_trial1.jsonl",
+      "log_records": 100,
+      "criteria": {
+        "1": {
+          "score": "30/34",
+          "met": true,
+          "wrong": [
+            {
+              "truth": "None of These",
+              "got": "Administrative",
+              "confidence": 0.3398,
+              "preview": "From gas prices to grocery bills: How Trump's economic policies are gi"
+            },
+            {
+              "truth": "None of These",
+              "got": "Administrative",
+              "confidence": 0.3795,
+              "preview": "Full text of Oklahoma State Question 845 set for Nov. 3 vote. If State"
+            },
+            {
+              "truth": "None of These",
+              "got": "Business",
+              "confidence": 0.8879,
+              "preview": "Prime Day 2 deals - Last chance: Mac mini, AirPods, Apple Watch Series"
+            },
+            {
+              "truth": "Business",
+              "got": "None of These",
+              "confidence": 0.3493,
+              "preview": "NOTICE OF INCORPORATION OF HOUSING AUTHORITY OF THE VILLAGE OF DECATUR"
+            }
+          ]
+        },
+        "2": {
+          "score": "0.40 lowest (None of These)",
+          "met": false,
+          "recall": {
+            "Business": 0.95,
+            "Economy": 1.0,
+            "Administrative": 1.0,
+            "None of These": 0.4
+          }
+        },
+        "3": {
+          "score": "34/35",
+          "met": false,
+          "over": [
+            {
+              "position": 1,
+              "what": "held-out post",
+              "status": 200,
+              "duration_ms": 226.89,
+              "tokenize_ms": 2.3,
+              "model_ms": 224.47,
+              "n_tokens": 67
+            }
+          ],
+          "slowest_ms": 226.89,
+          "median_ms": 4.47
+        },
+        "4": {
+          "score": "50/50",
+          "met": true,
+          "disagreements": [],
+          "statuses_sent": {
+            "200": 40,
+            "400": 9,
+            "413": 1
+          }
+        },
+        "5": {
+          "score": "11/14, then 200",
+          "met": false,
+          "not_refused": [
+            {
+              "case": "body over 1 MB",
+              "status": null,
+              "error": null,
+              "seconds": 0.017,
+              "problem": "no answer: ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine",
+              "refused": false
+            },
+            {
+              "case": "body shorter than Content-Length",
+              "status": null,
+              "error": null,
+              "seconds": 5.026,
+              "problem": "no answer: TimeoutError: timed out",
+              "refused": false
+            },
+            {
+              "case": "JSON nested 100,000 deep",
+              "status": 500,
+              "error": "the classifier failed on this input; it has been logged",
+              "seconds": 0.017,
+              "problem": null,
+              "refused": false
+            }
+          ],
+          "cases": [
+            {
+              "case": "empty text",
+              "status": 400,
+              "error": "'text' is empty",
+              "seconds": 0.001,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "whitespace only",
+              "status": 400,
+              "error": "'text' is empty",
+              "seconds": 0.001,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "no text field",
+              "status": 400,
+              "error": "'text' is missing",
+              "seconds": 0.001,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "text is a number",
+              "status": 400,
+              "error": "'text' must be a string, got int",
+              "seconds": 0.024,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "text is null",
+              "status": 400,
+              "error": "'text' is missing",
+              "seconds": 0.001,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "not JSON",
+              "status": 400,
+              "error": "body is not valid JSON (Expecting value at character 0)",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "JSON cut short",
+              "status": 400,
+              "error": "body is not valid JSON (Unterminated string starting at at character 9)",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "a list, not an object",
+              "status": 400,
+              "error": "body must be a JSON object like {\"text\": \"...\"}",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "no body",
+              "status": 400,
+              "error": "request body is empty; send {\"text\": \"...\"}",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "body over 1 MB",
+              "status": null,
+              "error": null,
+              "seconds": 0.017,
+              "problem": "no answer: ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine",
+              "refused": false
+            },
+            {
+              "case": "wrong route",
+              "status": 404,
+              "error": "no route /label; try POST /classify",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "not valid UTF-8",
+              "status": 400,
+              "error": "body is not valid UTF-8",
+              "seconds": 0.016,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "body shorter than Content-Length",
+              "status": null,
+              "error": null,
+              "seconds": 5.026,
+              "problem": "no answer: TimeoutError: timed out",
+              "refused": false
+            },
+            {
+              "case": "JSON nested 100,000 deep",
+              "status": 500,
+              "error": "the classifier failed on this input; it has been logged",
+              "seconds": 0.017,
+              "problem": null,
+              "refused": false
+            }
+          ],
+          "follow_up_status": 200
+        }
+      },
+      "server_output_tail": "Loading the model ...\r\nModel loaded in 4.5s on cuda: Business, Economy, Administrative, None of These\r\nLogging to C:\\Users\\heman\\Documents\\AI201\\ai201-project3-takemeter-starter-v2026\\logs\\eval_after_trial1.jsonl\r\nListening on http://127.0.0.1:8765   (Ctrl+C to stop)\r\n----------------------------------------\r\nException occurred during processing of request from ('127.0.0.1', 59767)\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socketserver.py\", line 697, in process_request_thread\r\n    self.finish_request(request, client_address)\r\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socketserver.py\", line 362, in finish_request\r\n    self.RequestHandlerClass(request, client_address, self)\r\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socketserver.py\", line 766, in __init__\r\n    self.handle()\r\n    ~~~~~~~~~~~^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\http\\server.py\", line 438, in handle\r\n    self.handle_one_request()\r\n    ~~~~~~~~~~~~~~~~~~~~~~~^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\http\\server.py\", line 404, in handle_one_request\r\n    self.raw_requestline = self.rfile.readline(65537)\r\n                           ~~~~~~~~~~~~~~~~~~~^^^^^^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socket.py\", line 719, in readinto\r\n    return self._sock.recv_into(b)\r\n           ~~~~~~~~~~~~~~~~~~~~^^^\r\nConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine\r\n----------------------------------------\r\n"
+    },
+    {
+      "trial": 2,
+      "log": "logs/eval_after_trial2.jsonl",
+      "log_records": 100,
+      "criteria": {
+        "1": {
+          "score": "30/34",
+          "met": true,
+          "wrong": [
+            {
+              "truth": "None of These",
+              "got": "Administrative",
+              "confidence": 0.3398,
+              "preview": "From gas prices to grocery bills: How Trump's economic policies are gi"
+            },
+            {
+              "truth": "None of These",
+              "got": "Administrative",
+              "confidence": 0.3795,
+              "preview": "Full text of Oklahoma State Question 845 set for Nov. 3 vote. If State"
+            },
+            {
+              "truth": "None of These",
+              "got": "Business",
+              "confidence": 0.8879,
+              "preview": "Prime Day 2 deals - Last chance: Mac mini, AirPods, Apple Watch Series"
+            },
+            {
+              "truth": "Business",
+              "got": "None of These",
+              "confidence": 0.3493,
+              "preview": "NOTICE OF INCORPORATION OF HOUSING AUTHORITY OF THE VILLAGE OF DECATUR"
+            }
+          ]
+        },
+        "2": {
+          "score": "0.40 lowest (None of These)",
+          "met": false,
+          "recall": {
+            "Business": 0.95,
+            "Economy": 1.0,
+            "Administrative": 1.0,
+            "None of These": 0.4
+          }
+        },
+        "3": {
+          "score": "34/35",
+          "met": false,
+          "over": [
+            {
+              "position": 1,
+              "what": "held-out post",
+              "status": 200,
+              "duration_ms": 213.37,
+              "tokenize_ms": 2.1,
+              "model_ms": 211.15,
+              "n_tokens": 67
+            }
+          ],
+          "slowest_ms": 213.37,
+          "median_ms": 4.64
+        },
+        "4": {
+          "score": "50/50",
+          "met": true,
+          "disagreements": [],
+          "statuses_sent": {
+            "200": 40,
+            "400": 9,
+            "413": 1
+          }
+        },
+        "5": {
+          "score": "11/14, then 200",
+          "met": false,
+          "not_refused": [
+            {
+              "case": "body over 1 MB",
+              "status": null,
+              "error": null,
+              "seconds": 0.016,
+              "problem": "no answer: ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host",
+              "refused": false
+            },
+            {
+              "case": "body shorter than Content-Length",
+              "status": null,
+              "error": null,
+              "seconds": 5.019,
+              "problem": "no answer: TimeoutError: timed out",
+              "refused": false
+            },
+            {
+              "case": "JSON nested 100,000 deep",
+              "status": 500,
+              "error": "the classifier failed on this input; it has been logged",
+              "seconds": 0.017,
+              "problem": null,
+              "refused": false
+            }
+          ],
+          "cases": [
+            {
+              "case": "empty text",
+              "status": 400,
+              "error": "'text' is empty",
+              "seconds": 0.021,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "whitespace only",
+              "status": 400,
+              "error": "'text' is empty",
+              "seconds": 0.016,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "no text field",
+              "status": 400,
+              "error": "'text' is missing",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "text is a number",
+              "status": 400,
+              "error": "'text' must be a string, got int",
+              "seconds": 0.016,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "text is null",
+              "status": 400,
+              "error": "'text' is missing",
+              "seconds": 0.001,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "not JSON",
+              "status": 400,
+              "error": "body is not valid JSON (Expecting value at character 0)",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "JSON cut short",
+              "status": 400,
+              "error": "body is not valid JSON (Unterminated string starting at at character 9)",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "a list, not an object",
+              "status": 400,
+              "error": "body must be a JSON object like {\"text\": \"...\"}",
+              "seconds": 0.001,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "no body",
+              "status": 400,
+              "error": "request body is empty; send {\"text\": \"...\"}",
+              "seconds": 0.014,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "body over 1 MB",
+              "status": null,
+              "error": null,
+              "seconds": 0.016,
+              "problem": "no answer: ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host",
+              "refused": false
+            },
+            {
+              "case": "wrong route",
+              "status": 404,
+              "error": "no route /label; try POST /classify",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "not valid UTF-8",
+              "status": 400,
+              "error": "body is not valid UTF-8",
+              "seconds": 0.001,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "body shorter than Content-Length",
+              "status": null,
+              "error": null,
+              "seconds": 5.019,
+              "problem": "no answer: TimeoutError: timed out",
+              "refused": false
+            },
+            {
+              "case": "JSON nested 100,000 deep",
+              "status": 500,
+              "error": "the classifier failed on this input; it has been logged",
+              "seconds": 0.017,
+              "problem": null,
+              "refused": false
+            }
+          ],
+          "follow_up_status": 200
+        }
+      },
+      "server_output_tail": "Loading the model ...\r\nModel loaded in 4.5s on cuda: Business, Economy, Administrative, None of These\r\nLogging to C:\\Users\\heman\\Documents\\AI201\\ai201-project3-takemeter-starter-v2026\\logs\\eval_after_trial2.jsonl\r\nListening on http://127.0.0.1:8765   (Ctrl+C to stop)\r\n----------------------------------------\r\nException occurred during processing of request from ('127.0.0.1', 51335)\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socketserver.py\", line 697, in process_request_thread\r\n    self.finish_request(request, client_address)\r\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socketserver.py\", line 362, in finish_request\r\n    self.RequestHandlerClass(request, client_address, self)\r\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socketserver.py\", line 766, in __init__\r\n    self.handle()\r\n    ~~~~~~~~~~~^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\http\\server.py\", line 438, in handle\r\n    self.handle_one_request()\r\n    ~~~~~~~~~~~~~~~~~~~~~~~^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\http\\server.py\", line 404, in handle_one_request\r\n    self.raw_requestline = self.rfile.readline(65537)\r\n                           ~~~~~~~~~~~~~~~~~~~^^^^^^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socket.py\", line 719, in readinto\r\n    return self._sock.recv_into(b)\r\n           ~~~~~~~~~~~~~~~~~~~~^^^\r\nConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine\r\n----------------------------------------\r\n"
+    },
+    {
+      "trial": 3,
+      "log": "logs/eval_after_trial3.jsonl",
+      "log_records": 100,
+      "criteria": {
+        "1": {
+          "score": "30/34",
+          "met": true,
+          "wrong": [
+            {
+              "truth": "None of These",
+              "got": "Administrative",
+              "confidence": 0.3398,
+              "preview": "From gas prices to grocery bills: How Trump's economic policies are gi"
+            },
+            {
+              "truth": "None of These",
+              "got": "Administrative",
+              "confidence": 0.3795,
+              "preview": "Full text of Oklahoma State Question 845 set for Nov. 3 vote. If State"
+            },
+            {
+              "truth": "None of These",
+              "got": "Business",
+              "confidence": 0.8879,
+              "preview": "Prime Day 2 deals - Last chance: Mac mini, AirPods, Apple Watch Series"
+            },
+            {
+              "truth": "Business",
+              "got": "None of These",
+              "confidence": 0.3493,
+              "preview": "NOTICE OF INCORPORATION OF HOUSING AUTHORITY OF THE VILLAGE OF DECATUR"
+            }
+          ]
+        },
+        "2": {
+          "score": "0.40 lowest (None of These)",
+          "met": false,
+          "recall": {
+            "Business": 0.95,
+            "Economy": 1.0,
+            "Administrative": 1.0,
+            "None of These": 0.4
+          }
+        },
+        "3": {
+          "score": "34/35",
+          "met": false,
+          "over": [
+            {
+              "position": 1,
+              "what": "held-out post",
+              "status": 200,
+              "duration_ms": 209.78,
+              "tokenize_ms": 2.91,
+              "model_ms": 206.76,
+              "n_tokens": 67
+            }
+          ],
+          "slowest_ms": 209.78,
+          "median_ms": 4.18
+        },
+        "4": {
+          "score": "50/50",
+          "met": true,
+          "disagreements": [],
+          "statuses_sent": {
+            "200": 40,
+            "400": 9,
+            "413": 1
+          }
+        },
+        "5": {
+          "score": "12/14, then 200",
+          "met": false,
+          "not_refused": [
+            {
+              "case": "body shorter than Content-Length",
+              "status": null,
+              "error": null,
+              "seconds": 5.007,
+              "problem": "no answer: TimeoutError: timed out",
+              "refused": false
+            },
+            {
+              "case": "JSON nested 100,000 deep",
+              "status": 500,
+              "error": "the classifier failed on this input; it has been logged",
+              "seconds": 0.016,
+              "problem": null,
+              "refused": false
+            }
+          ],
+          "cases": [
+            {
+              "case": "empty text",
+              "status": 400,
+              "error": "'text' is empty",
+              "seconds": 0.021,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "whitespace only",
+              "status": 400,
+              "error": "'text' is empty",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "no text field",
+              "status": 400,
+              "error": "'text' is missing",
+              "seconds": 0.001,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "text is a number",
+              "status": 400,
+              "error": "'text' must be a string, got int",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "text is null",
+              "status": 400,
+              "error": "'text' is missing",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "not JSON",
+              "status": 400,
+              "error": "body is not valid JSON (Expecting value at character 0)",
+              "seconds": 0.016,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "JSON cut short",
+              "status": 400,
+              "error": "body is not valid JSON (Unterminated string starting at at character 9)",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "a list, not an object",
+              "status": 400,
+              "error": "body must be a JSON object like {\"text\": \"...\"}",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "no body",
+              "status": 400,
+              "error": "request body is empty; send {\"text\": \"...\"}",
+              "seconds": 0.016,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "body over 1 MB",
+              "status": 413,
+              "error": "body is 1100012 bytes; the limit is 1000000",
+              "seconds": 0.016,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "wrong route",
+              "status": 404,
+              "error": "no route /label; try POST /classify",
+              "seconds": 0.015,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "not valid UTF-8",
+              "status": 400,
+              "error": "body is not valid UTF-8",
+              "seconds": 0.016,
+              "problem": null,
+              "refused": true
+            },
+            {
+              "case": "body shorter than Content-Length",
+              "status": null,
+              "error": null,
+              "seconds": 5.007,
+              "problem": "no answer: TimeoutError: timed out",
+              "refused": false
+            },
+            {
+              "case": "JSON nested 100,000 deep",
+              "status": 500,
+              "error": "the classifier failed on this input; it has been logged",
+              "seconds": 0.016,
+              "problem": null,
+              "refused": false
+            }
+          ],
+          "follow_up_status": 200
+        }
+      },
+      "server_output_tail": "Loading the model ...\r\nModel loaded in 4.5s on cuda: Business, Economy, Administrative, None of These\r\nLogging to C:\\Users\\heman\\Documents\\AI201\\ai201-project3-takemeter-starter-v2026\\logs\\eval_after_trial3.jsonl\r\nListening on http://127.0.0.1:8765   (Ctrl+C to stop)\r\n----------------------------------------\r\nException occurred during processing of request from ('127.0.0.1', 51440)\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socketserver.py\", line 697, in process_request_thread\r\n    self.finish_request(request, client_address)\r\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socketserver.py\", line 362, in finish_request\r\n    self.RequestHandlerClass(request, client_address, self)\r\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socketserver.py\", line 766, in __init__\r\n    self.handle()\r\n    ~~~~~~~~~~~^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\http\\server.py\", line 438, in handle\r\n    self.handle_one_request()\r\n    ~~~~~~~~~~~~~~~~~~~~~~~^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\http\\server.py\", line 404, in handle_one_request\r\n    self.raw_requestline = self.rfile.readline(65537)\r\n                           ~~~~~~~~~~~~~~~~~~~^^^^^^^\r\n  File \"C:\\Users\\heman\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socket.py\", line 719, in readinto\r\n    return self._sock.recv_into(b)\r\n           ~~~~~~~~~~~~~~~~~~~~^^^\r\nConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine\r\n----------------------------------------\r\n"
+    }
+  ]
+}
