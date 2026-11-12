@@ -1081,3 +1081,181 @@ CPU, where each request will be slower.
 **2.6 s of compute a day**. If the server stays up all day, only the first
 of the hundred is a slow one, so it is nearer 218.23 ms + 99 × 4.48 ms =
 0.66 s, plus 4.76 s to load the model once: about 5.4 s a day in total.
+
+**Stretch**
+
+Declared here before starting either one:
+
+- *A second measured improvement*, run and logged the same way as the first.
+- *A latency breakdown*: where the time goes across the stages of one
+  request, from the `tokenize_ms`, `model_ms` and `duration_ms` fields the
+  log already records.
+
+**Run Log — Before**
+
+The criteria are in `criteria.md` under "Capstone criteria" and were
+committed (`add capstone criteria`) before `capstone_eval.py` existed. A
+trial is one fresh start of `serve.py` followed by 100 requests. Run with
+`python capstone_eval.py --label before`; scores are in
+`capstone_results_before.json` and each trial's server log is
+`logs/eval_before_trial<N>.jsonl`.
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Endpoint as accurate as the notebook | 30 of 34 | 30/34 | 30/34 | 30/34 | MET |
+| 2. Every label's recall through the endpoint | ≥ 0.60 | 0.40 lowest (`None of These`) | 0.40 lowest (`None of These`) | 0.40 lowest (`None of These`) | MISSED |
+| 3. No classified request over 100 ms | 35 of 35 | 33/35 | 33/35 | 33/35 | MISSED |
+| 4. Log agrees with what was sent, 10 at a time | 50 of 50 | 50/50 | 50/50 | 50/50 | MET |
+| 5. Bad request refused within 5 s, server still up | 14 of 14, then 200 | 12/14, then 200 | 12/14, then 200 | 12/14, then 200 | MISSED |
+
+The three runs have the same scores. I checked that they really are three
+runs: each has its own log file with its own timestamps and request ids, and
+the timings differ (the first request took 210.71, 212.08 and 210.98 ms).
+The scores repeat because nothing in the endpoint is random. The model is
+fixed and in evaluation mode, so the same text gets the same label every
+time.
+
+*Criterion 1.* From `stage_held_out` in `capstone_eval.py`, trial 1. The
+four posts the endpoint got wrong, of 34:
+
+```
+true None of These  got Administrative  conf 0.34  From gas prices to grocery bills: How Trump's economic policies are gi
+true None of These  got Administrative  conf 0.38  Full text of Oklahoma State Question 845 set for Nov. 3 vote. If State
+true None of These  got Business        conf 0.89  Prime Day 2 deals - Last chance: Mac mini, AirPods, Apple Watch Series
+true Business       got None of These   conf 0.35  NOTICE OF INCORPORATION OF HOUSING AUTHORITY OF THE VILLAGE OF DECATUR
+```
+
+*Criterion 2.* Scored in `score_trial` from the same 34 answers, trial 1:
+
+```
+Business        recall 0.95
+Economy         recall 1.00
+Administrative  recall 1.00
+None of These   recall 0.40
+```
+
+*Criterion 3.* From `stage_held_out` and `stage_long_article`, with the
+times read from each trial's log. The requests over 100 ms, all three
+trials:
+
+```
+trial 1: request  1 (held-out post): duration_ms 210.71, tokenize_ms 2.52, model_ms 208.09, n_tokens 67
+trial 1: request 35 (900,000-character article): duration_ms 768.34, tokenize_ms 758.52, model_ms 3.49, n_tokens 177274
+trial 2: request  1 (held-out post): duration_ms 212.08, tokenize_ms 3.37, model_ms 208.6, n_tokens 67
+trial 2: request 35 (900,000-character article): duration_ms 770.17, tokenize_ms 760.78, model_ms 3.31, n_tokens 177274
+trial 3: request  1 (held-out post): duration_ms 210.98, tokenize_ms 3.45, model_ms 207.4, n_tokens 67
+trial 3: request 35 (900,000-character article): duration_ms 766.15, tokenize_ms 758.56, model_ms 3.63, n_tokens 177274
+```
+
+The two log records from trial 1 (`logs/eval_before_trial1.jsonl`, written
+by `Handler._finish` in `serve.py`):
+
+```json
+{"ts": "2026-11-12T01:08:36.207+00:00", "request_id": "33f4b10fc861", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 240, "input_preview": "Bitcoin Miner Fees Fall to Just 0.64% of Revenue, Analyst Says. Transaction fees averaged just 0.64% of Bitcoin miner revenue in the last 30 days, according to ", "n_tokens": 67, "truncated": false, "label": "Business", "confidence": 0.9269, "scores": {"Business": 0.9269, "Economy": 0.0222, "Administrative": 0.0193, "None of These": 0.0316}, "tokenize_ms": 2.52, "model_ms": 208.09, "duration_ms": 210.71, "error": null}
+{"ts": "2026-11-12T01:08:36.978+00:00", "request_id": "eda94e455cc6", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 900000, "input_preview": "The city council approved a new water budget for the coming year. The city council approved a new water budget for the coming year. The city council approved a ", "n_tokens": 177274, "truncated": true, "label": "None of These", "confidence": 0.3023, "scores": {"Business": 0.1649, "Economy": 0.275, "Administrative": 0.2578, "None of These": 0.3023}, "tokenize_ms": 758.52, "model_ms": 3.49, "duration_ms": 768.34, "error": null}
+```
+
+*Criterion 4.* From `stage_concurrent`, trial 1. The 50 requests were
+answered 200 forty times, 400 nine times and 413 once, and every one had
+exactly one log record with the same `request_id`, `http_status` and
+`label`. The harness waits one second before reading the log, because
+`serve.py` writes a record just after it sends the answer.
+
+*Criterion 5.* From `stage_bad_requests`, trial 1. HTTP status, seconds to
+answer, the case, and the error message sent back:
+
+```
+400    0.011 s  empty text                        'text' is empty
+400    0.015 s  whitespace only                   'text' is empty
+400    0.001 s  no text field                     'text' is missing
+400    0.014 s  text is a number                  'text' must be a string, got int
+400    0.015 s  text is null                      'text' is missing
+400    0.001 s  not JSON                          body is not valid JSON (Expecting value at character 0)
+400    0.015 s  JSON cut short                    body is not valid JSON (Unterminated string starting at at character 9)
+400    0.016 s  a list, not an object             body must be a JSON object like {"text": "..."}
+400    0.016 s  no body                           request body is empty; send {"text": "..."}
+413    0.016 s  body over 1 MB                    body is 1100012 bytes; the limit is 1000000
+404    0.015 s  wrong route                       no route /label; try POST /classify
+400    0.016 s  not valid UTF-8                   body is not valid UTF-8
+None   5.012 s  body shorter than Content-Length  no answer: TimeoutError: timed out
+500    0.016 s  JSON nested 100,000 deep          the classifier failed on this input; it has been logged
+```
+
+The log records for the two that were not refused:
+
+```json
+{"ts": "2026-11-12T01:08:38.435+00:00", "request_id": "c5c21604eac6", "event": "request", "method": "POST", "path": "/classify", "status": "rejected", "http_status": 400, "input_chars": null, "input_preview": null, "n_tokens": null, "truncated": null, "label": null, "confidence": null, "scores": null, "tokenize_ms": null, "model_ms": null, "duration_ms": 5011.32, "error": "body is not valid JSON (Unterminated string starting at at character 9)"}
+{"ts": "2026-11-12T01:08:43.461+00:00", "request_id": "30f3faeeb2d2", "event": "request", "method": "POST", "path": "/classify", "status": "error", "http_status": 500, "input_chars": null, "input_preview": null, "n_tokens": null, "truncated": null, "label": null, "confidence": null, "scores": null, "tokenize_ms": null, "model_ms": null, "duration_ms": 0.47, "error": "RecursionError: maximum recursion depth exceeded while decoding a JSON array from a unicode string"}
+```
+
+**Verdicts and Diagnoses**
+
+| # | Criterion | Target | Verdict | How I decided |
+|---|---|---|---|---|
+| 1 | Endpoint as accurate as the notebook | 30 of 34 | MET | 30 of 34 in all three trials, and the four it gets wrong are the same four cells as the seed-42 confusion matrix above |
+| 2 | Every label's recall through the endpoint | ≥ 0.60 | MISSED | `None of These` 0.40 in all three trials; the other three labels are 0.95 or 1.00 |
+| 3 | No classified request over 100 ms | 35 of 35 | MISSED | 33 of 35 in all three trials: the first request and the 900,000-character article |
+| 4 | Log agrees with what was sent, 10 at a time | 50 of 50 | MET | 50 of 50 in all three trials |
+| 5 | Bad request refused within 5 s, server still up | 14 of 14, then 200 | MISSED | 12 of 14 in all three trials: one request never got an answer and one got a 500 |
+
+*Criterion 2 — the stage is the model, not the endpoint.* The endpoint
+returns exactly what the notebook's model returns (criterion 1), so this is
+the unit 6 miss seen through a new door. Two of the five `None of These`
+posts were called `Administrative` at low confidence (0.34 and 0.38): an
+article on how Trump's economic policies play for Democrats, and the text of
+Oklahoma State Question 845. Both are full of government and election words,
+and my rules send them to `None of These` because no agency takes an action.
+The model learned the vocabulary, not the rule. The third, a Prime Day deals
+page, was called `Business` at 0.89, because it is a list of company and
+product names. The mechanism is the one What's Still Broken already names
+above: `None of These` is defined by what it isn't, so its 24 training rows
+share nothing to learn.
+
+*Criterion 3 — two misses, two different stages.*
+
+- **The first request (about 211 ms): the stage is the model's forward
+  pass.** `model_ms` is 208.09 of the 210.71 ms, and `tokenize_ms` is 2.52.
+  The same post costs about 4 ms on any later request. The mechanism is
+  that the first pass through the model on the GPU pays a one-time set-up
+  cost, and `serve.py` never runs the model before it starts listening. So
+  the cost is not paid at start-up, where nobody is waiting. It is paid by
+  whoever calls first.
+- **The 900,000-character article (about 768 ms): the stage is the
+  tokenizer.** `tokenize_ms` is 758.52 of the 768.34 ms and `model_ms` is
+  3.49, the same as a short post. The mechanism is in `Classifier.classify`
+  in `classify.py`: to report `n_tokens` it tokenizes the whole text with no
+  limit (177,274 tokens), then tokenizes it again cut to the 128 the model
+  reads. So the cost grows with the length of what the caller sends. My
+  criterion assumed it was capped by the 128-token limit. It is worse than
+  one slow answer, because `serve.py` holds `model_lock` around the whole
+  of `classify()`, so every other caller waits for those 758 ms too.
+
+*Criterion 5 — two misses, both in how `serve.py` reads the request.*
+
+- **Body shorter than its `Content-Length` (no answer in 5 s): the stage is
+  `Handler._read_json_body`.** It calls `self.rfile.read(length)` with the
+  length the caller claimed. The caller said 200 bytes and sent 20, so the
+  read waits for 180 bytes that never come, and the handler has no socket
+  timeout. The server only moved on when the client gave up and closed the
+  connection. The log record shows it: `duration_ms` 5011.32, with a 400
+  that was written to a closed socket. So the log says the caller was sent
+  a 400 and the caller got nothing. That is a disagreement between the log
+  and the caller that criterion 4 did not catch, because none of its 50
+  requests was this kind.
+- **JSON nested 100,000 deep (500): the stage is the same function.**
+  `json.loads` raises `RecursionError` on that body, not `JSONDecodeError`.
+  `_read_json_body` only catches `JSONDecodeError` and `UnicodeDecodeError`,
+  so the error falls through to the `except Exception` in `do_POST`, which
+  was written for the model failing. The caller got a 500 saying "the
+  classifier failed on this input", which is wrong twice: it was the
+  caller's mistake, and the classifier never ran.
+
+*The pattern.* Criterion 2 is the model, and the endpoint cannot fix it. The
+first-request miss is a start-up cost paid at the wrong moment. The other
+three misses (the long article, the short body and the nested JSON) are one
+problem with three symptoms: **the endpoint lets the caller decide how much
+work it does before it has decided whether to accept the request.** The
+caller's text length sets the tokenizer's cost, the caller's claimed
+`Content-Length` sets how long a thread waits, and the caller's nesting
+depth sets how deep the JSON parser recurses. The 1 MB body limit was the
+only bound I put on the input, and all three got under it.
