@@ -24,6 +24,8 @@ Fields on a request record:
     input_chars    length of the text that came in
     input_preview  its first 160 characters
     n_tokens       how many tokens the text had before any cut
+    n_tokens_exact false when the text was over 4,096 characters and only its
+                   head was counted, so n_tokens is "at least this many"
     truncated      true if it was longer than the model's 128-token limit
     label          what came out
     confidence     the winning label's score, 0 to 1

@@ -25,6 +25,10 @@ for _stream in (sys.stdout, sys.stderr):
 ROOT = Path(__file__).resolve().parent
 MODEL_DIR = ROOT / "models" / "takemeter"
 
+# How much of a long text is tokenized to count its tokens. See classify().
+HEAD_CHARS = 4096
+WORD_MARGIN_TOKENS = 100
+
 
 class InputError(ValueError):
     """The caller sent something that can't be classified. Their fault, not ours."""
@@ -89,14 +93,34 @@ class Classifier:
 
         Returns label, confidence (the winning softmax score), the score for
         every label, how many tokens the text had, whether it was cut to fit,
-        and how long the two stages took.
+        and how long the two stages took. For a text over 4,096 characters
+        n_tokens is a lower bound, and n_tokens_exact says so.
         """
         text = validate_text(text)
         torch = self._torch
 
         t0 = time.perf_counter()
         # Counted without truncation so we can say whether the model saw it all.
-        n_tokens = len(self.tokenizer(text, truncation=False, verbose=False)["input_ids"])
+        #
+        # But only the head of a long text is counted. The model reads 128
+        # tokens, so tokenizing a 900,000-character article in full (177,274
+        # tokens, 758 ms) bought nothing except an exact count. If the head
+        # alone overflows the limit by a clear margin, the model's 128 tokens
+        # all come from it and the answer is the same as for the full text.
+        # The margin is one word's worth: a word is at most 100 word-pieces
+        # (longer ones become a single [UNK]), so cutting the head mid-word
+        # cannot change anything the model gets to see.
+        head = text[:HEAD_CHARS]
+        n_tokens = len(self.tokenizer(head, truncation=False, verbose=False)["input_ids"])
+        n_tokens_exact = True
+        if len(text) > HEAD_CHARS:
+            if n_tokens >= self.max_length + WORD_MARGIN_TOKENS:
+                text, n_tokens_exact = head, False      # n_tokens is now "at least"
+            else:
+                # Rare: 4,096 characters that make few tokens (mostly spaces,
+                # or one giant unbroken string). Fall back to counting it all.
+                n_tokens = len(self.tokenizer(text, truncation=False,
+                                              verbose=False)["input_ids"])
         encoded = self.tokenizer(
             text, truncation=True, padding="max_length",
             max_length=self.max_length, return_tensors="pt",
@@ -114,6 +138,7 @@ class Classifier:
             "confidence": round(probs[best], 4),
             "scores": {label: round(p, 4) for label, p in zip(self.labels, probs)},
             "n_tokens": n_tokens,
+            "n_tokens_exact": n_tokens_exact,
             "truncated": n_tokens > self.max_length,
             "timings_ms": {
                 "tokenize": round((t1 - t0) * 1000, 2),

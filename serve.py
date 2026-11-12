@@ -148,6 +148,7 @@ class Handler(BaseHTTPRequestHandler):
             "input_chars": None,
             "input_preview": None,
             "n_tokens": None,
+            "n_tokens_exact": None,
             "truncated": None,
             "label": None,
             "confidence": None,
@@ -224,6 +225,7 @@ class Handler(BaseHTTPRequestHandler):
         record.update(
             status="ok",
             n_tokens=result["n_tokens"],
+            n_tokens_exact=result["n_tokens_exact"],
             truncated=result["truncated"],
             label=result["label"],
             confidence=result["confidence"],
@@ -237,6 +239,7 @@ class Handler(BaseHTTPRequestHandler):
             "confidence": result["confidence"],
             "scores": result["scores"],
             "n_tokens": result["n_tokens"],
+            "n_tokens_exact": result["n_tokens_exact"],
             "truncated": result["truncated"],
             "duration_ms": None,     # filled in by _finish
         }, started)
