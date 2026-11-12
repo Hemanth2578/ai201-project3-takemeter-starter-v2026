@@ -1,5 +1,148 @@
 # Running TakeMeter
 
+## Capstone: running the classify endpoint
+
+**Run path: Path B, local with logs.** The system loads a fine-tuned
+DistilBERT and PyTorch on your own machine. Nothing is hosted, and there are
+no accounts or keys.
+
+### The command that starts it
+
+```bash
+python serve.py
+```
+
+It loads the model, prints `Listening on http://127.0.0.1:8000`, and stays
+running until Ctrl+C. Every request it answers is appended to
+`logs/classify.jsonl`.
+
+### One-time setup, from a clean checkout
+
+```bash
+git clone https://github.com/Hemanth2578/ai201-project3-takemeter-starter-v2026.git
+cd ai201-project3-takemeter-starter-v2026
+python -m venv .venv
+.venv\Scripts\Activate.ps1          # macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+python train.py                     # writes models/takemeter/  (once)
+python serve.py                     # the start command
+```
+
+`python train.py` is needed once because the trained model is not in the
+repository: it is 268 MB and `models/` is in `.gitignore`. The script repeats
+the notebook's seed-42 run (same `labels.csv`, same split, same settings) and
+saves the result. It ends by checking itself against the unit 6 evidence:
+
+```
+[ok] held-out split vs test_split.csv (34 posts)
+[ok] accuracy 0.882 vs results.json 0.882  (gap +0.000)
+```
+
+If either line says `DIFFERENT`, the model you are about to serve is not the
+one the README describes. On other hardware a small accuracy gap is expected.
+
+### Sending it a request
+
+In a second terminal, with the virtual environment active:
+
+```bash
+python send.py "Credit Agricole agrees to buy German bank IKB"
+python send.py --held-out 10        # the first 10 posts in test_split.csv
+python send.py --bad                # 11 requests it should refuse
+```
+
+Or without the client:
+
+```bash
+curl -X POST http://127.0.0.1:8000/classify -H "Content-Type: application/json" -d "{\"text\": \"Credit Agricole agrees to buy German bank IKB\"}"
+```
+
+```json
+{"request_id": "a69553658239", "label": "Business", "confidence": 0.9143,
+ "scores": {"Business": 0.9143, "Economy": 0.0294, "Administrative": 0.025, "None of These": 0.0314},
+ "n_tokens": 30, "truncated": false, "duration_ms": 5.12}
+```
+
+| Route | What it does |
+|---|---|
+| `POST /classify` with `{"text": "<one article>"}` | Returns one of the four labels, its confidence, and every label's score |
+| `GET /health` | Says which model is loaded and on what device |
+
+| Answer | When |
+|---|---|
+| `200` | The text was classified |
+| `400` | The request was the caller's mistake: no body, not JSON, no `text`, `text` not a string, or `text` empty |
+| `404` | No such route |
+| `413` | Body over 1 MB |
+| `500` | The model failed on the input |
+
+Text longer than 128 tokens is still classified, on its first 128 tokens,
+because that is all the model was trained to read. The response says so with
+`"truncated": true`.
+
+### Reading the log
+
+```bash
+python runlog.py                    # counts and timings for the whole log
+python runlog.py --last 10          # the 10 most recent requests only
+python runlog.py --tail 5           # the last 5 records as written
+```
+
+`logs/classify.jsonl` has one JSON object per line. The field list is at the
+top of `runlog.py`. Failures are records too: a refused request has
+`"status": "rejected"`, a model failure has `"status": "error"`, and a server
+that could not start writes a `startup` record with `"status": "error"`.
+
+### What the environment needs
+
+| Thing | What I ran it on | What works |
+|---|---|---|
+| Python | 3.13.9 | 3.11, 3.12 or 3.13. Not 3.14 |
+| OS | Windows 11 | Any; only the venv activate line differs |
+| Device | NVIDIA RTX 5070 Laptop GPU (`cuda`) | `cuda`, `mps` or `cpu`. `serve.py` picks the fastest it finds |
+| Disk | | About 9 GB for PyTorch, plus 268 MB for the saved model |
+| Memory | | About 6 GB. Too much for the 512 MB free hosting tier, which is why this is Path B |
+| Network | | Only for `pip install`, and for `train.py`'s first run, which downloads `distilbert-base-uncased` (268 MB) from Hugging Face. `serve.py` needs none |
+
+Dependencies are pinned by range in `requirements.txt`. The exact versions
+installed when the committed log was written:
+
+| Package | Version |
+|---|---|
+| torch | 2.14.1+cu130 |
+| transformers | 4.57.6 |
+| tokenizers | 0.22.2 |
+| datasets | 3.6.0 |
+| accelerate | 1.15.0 |
+| scikit-learn | 1.9.1 |
+| pandas | 2.3.3 |
+| numpy | 2.5.4 |
+
+`+cu130` is the CUDA build of PyTorch. A plain `pip install -r
+requirements.txt` gives you the CPU build on most machines, which works.
+
+The endpoint itself adds no dependency: `serve.py`, `runlog.py` and `send.py`
+use only the Python standard library on top of what `requirements.txt`
+already installs.
+
+| Model file | Size | Where it comes from |
+|---|---|---|
+| `models/takemeter/model.safetensors` | 268 MB | `python train.py` |
+| `models/takemeter/` tokenizer and config files | 1 MB | `python train.py` |
+
+### When the endpoint goes wrong
+
+| What you see | What it means |
+|---|---|
+| `error: No saved model in models/takemeter` | Run `python train.py` first |
+| `error: could not listen on 127.0.0.1:8000` | Another `serve.py` is already running. Stop it, or use `python serve.py --port 8001` and `python send.py --url http://127.0.0.1:8001 ...` |
+| `Could not reach http://127.0.0.1:8000` from `send.py` | `serve.py` isn't running, or is on another port |
+| The first request takes about 0.2 s and the rest a few ms | Expected. The first pass through the model pays a one-time start-up cost |
+
+---
+
+The rest of this file is the unit 5 and 6 starter guide, unchanged.
+
 Everything about how the starter works.
 
 This pair is different from the last two: **you train a model.** It runs on
