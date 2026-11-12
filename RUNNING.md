@@ -60,7 +60,7 @@ curl -X POST http://127.0.0.1:8000/classify -H "Content-Type: application/json" 
 ```json
 {"request_id": "a29e5489c7b5", "label": "Business", "confidence": 0.8904,
  "scores": {"Business": 0.8904, "Economy": 0.0374, "Administrative": 0.0307, "None of These": 0.0414},
- "n_tokens": 13, "truncated": false, "duration_ms": 4.43}
+ "n_tokens": 13, "n_tokens_exact": true, "truncated": false, "duration_ms": 4.43}
 ```
 
 | Route | What it does |
@@ -78,7 +78,19 @@ curl -X POST http://127.0.0.1:8000/classify -H "Content-Type: application/json" 
 
 Text longer than 128 tokens is still classified, on its first 128 tokens,
 because that is all the model was trained to read. The response says so with
-`"truncated": true`.
+`"truncated": true`. For text over 4,096 characters only the head is
+tokenized, so `n_tokens` is a lower bound and `"n_tokens_exact"` is `false`.
+
+### Re-running the capstone tests
+
+```bash
+python capstone_eval.py --label mine     # three trials, about 90 seconds
+```
+
+It starts its own `serve.py` on port 8765 for each trial, so stop nothing
+and start nothing first. It writes `capstone_results_mine.json` and
+`logs/eval_mine_trial<N>.jsonl`. The committed runs are labelled `before`,
+`after` and `after2`.
 
 ### Reading the log
 
@@ -137,7 +149,7 @@ already installs.
 | `error: No saved model in models/takemeter` | Run `python train.py` first |
 | `error: could not listen on 127.0.0.1:8000` | Another `serve.py` is already running. Stop it, or use `python serve.py --port 8001` and `python send.py --url http://127.0.0.1:8001 ...` |
 | `Could not reach http://127.0.0.1:8000` from `send.py` | `serve.py` isn't running, or is on another port |
-| The first request takes about 0.2 s and the rest a few ms | Expected. The first pass through the model pays a one-time start-up cost |
+| Start-up takes about 5 s before `Listening` appears | Expected. It loads the model, then runs it once so the first caller doesn't pay the one-time 0.2 s set-up cost |
 
 ---
 

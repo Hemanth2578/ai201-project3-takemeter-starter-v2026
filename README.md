@@ -1259,3 +1259,247 @@ caller's text length sets the tokenizer's cost, the caller's claimed
 `Content-Length` sets how long a thread waits, and the caller's nesting
 depth sets how deep the JSON parser recurses. The 1 MB body limit was the
 only bound I put on the input, and all three got under it.
+
+**The Improvement**
+
+*What I changed:* one thing, in `Classifier.classify` in `classify.py`. It
+used to tokenize the whole text to count its tokens. Now it tokenizes only
+the first 4,096 characters of a long text. If that head alone is clearly
+over the model's 128-token limit, the model's 128 tokens all come from it,
+so the head is all that gets tokenized. Nothing else changed: same model,
+same `serve.py` request handling, same criteria, same harness.
+
+*Which diagnosis pointed at it:* the pattern above, that the caller decides
+how much work the endpoint does. Of its three symptoms I took the long
+article, because it was the only one that also slowed down everyone else:
+the 758 ms of tokenizing happened inside `model_lock`.
+
+*Checked before re-running:* on 282 texts over 4,096 characters, built from
+my own articles and some odd cases, the 128 tokens the model receives are
+identical to the old path on all 282.
+
+### Run Log — After
+
+`python capstone_eval.py --label after`, results in
+`capstone_results_after.json`, logs in `logs/eval_after_trial<N>.jsonl`.
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Endpoint as accurate as the notebook | 30 of 34 | 30/34 | 30/34 | 30/34 | MET |
+| 2. Every label's recall through the endpoint | ≥ 0.60 | 0.40 lowest (`None of These`) | 0.40 lowest (`None of These`) | 0.40 lowest (`None of These`) | MISSED |
+| 3. No classified request over 100 ms | 35 of 35 | 34/35 | 34/35 | 34/35 | MISSED |
+| 4. Log agrees with what was sent, 10 at a time | 50 of 50 | 50/50 | 50/50 | 50/50 | MET |
+| 5. Bad request refused within 5 s, server still up | 14 of 14, then 200 | 11/14, then 200 | 11/14, then 200 | 12/14, then 200 | MISSED |
+
+The 900,000-character article after the change, from
+`logs/eval_after_trial1.jsonl`:
+
+```json
+{"ts": "2026-11-12T01:12:46.815+00:00", "request_id": "fc60bd1c98ed", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 900000, "input_preview": "The city council approved a new water budget for the coming year. The city council approved a new water budget for the coming year. The city council approved a ", "n_tokens": 809, "n_tokens_exact": false, "truncated": true, "label": "None of These", "confidence": 0.3023, "scores": {"Business": 0.1649, "Economy": 0.275, "Administrative": 0.2578, "None of These": 0.3023}, "tokenize_ms": 2.59, "model_ms": 3.11, "duration_ms": 6.77, "error": null}
+```
+
+*Before and after, side by side* (run 1 / run 2 / run 3):
+
+| Criterion | Target | Before | After | After the second improvement |
+|---|---|---|---|---|
+| 1. Accuracy through the endpoint | 30 of 34 | 30/34 / 30/34 / 30/34 — MET | 30/34 / 30/34 / 30/34 — MET | 30/34 / 30/34 / 30/34 — MET |
+| 2. Lowest label recall | ≥ 0.60 | 0.40 / 0.40 / 0.40 — MISSED | 0.40 / 0.40 / 0.40 — MISSED | 0.40 / 0.40 / 0.40 — MISSED |
+| 3. Classified requests within 100 ms | 35 of 35 | 33/35 / 33/35 / 33/35 — MISSED | 34/35 / 34/35 / 34/35 — MISSED | 35/35 / 35/35 / 35/35 — MET |
+| 4. Log agrees, 10 at a time | 50 of 50 | 50/50 / 50/50 / 50/50 — MET | 50/50 / 50/50 / 50/50 — MET | 50/50 / 50/50 / 50/50 — MET |
+| 5. Bad requests refused in 5 s | 14 of 14 | 12/14 / 12/14 / 12/14 — MISSED | 11/14 / 11/14 / 12/14 — MISSED | 12/14 / 12/14 / 12/14 — MISSED |
+| Slowest classified request, ms | | 768.34 / 770.17 / 766.15 | 226.89 / 213.37 / 209.78 | 7.38 / 8.33 / 7.41 |
+| The 900,000-character article, ms | | 768.34 / 770.17 / 766.15 | 6.77 / 7.52 / 6.83 | 7.38 / 8.33 / 7.41 |
+| The first request after start-up, ms | | 210.71 / 212.08 / 210.98 | 226.89 / 213.37 / 209.78 | 6.37 / 6.33 / 6.07 |
+
+*Did it help:* yes for what it was aimed at, and it did not change a
+verdict. The long article went from about 768 ms to about 7 ms, and
+criterion 3 went from 33 of 35 to 34 of 35. It is still MISSED, because the
+first request after start-up is still over 200 ms. That is the other
+mechanism in the criterion 3 diagnosis, and this change was never going to
+touch it.
+
+*What got worse, or looked like it:*
+
+- **Criterion 5 came out lower in two of the three trials: 11, 11, 12
+  against 12, 12, 12 before.** The request that failed is one that passed in
+  every earlier run, the body over 1 MB. In trials 1 and 2 the caller got
+  no answer: `ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine`. My change is in `classify.py` and this
+  request is refused before the classifier is reached, so I do not think the
+  change caused it. I tested that: I sent the same request 30 times to the
+  old code and 30 times to the new code, each on a fresh server, and got a
+  413 all 60 times. So I could not reproduce it on its own, and I cannot
+  prove what triggers it. What I can name is the mechanism. `serve.py`
+  answers 413 from the `Content-Length` header and closes the connection
+  without reading the 1.1 MB body, while the caller is still sending it. On
+  Windows the caller can then get a connection reset in place of the answer.
+  It is a race, it was there before the change, and it is the reason for
+  running three trials: one run of "before" would have told me this case was
+  fine.
+- **`n_tokens` is no longer exact for long texts.** For the article it now
+  reads 809 where the true count is 177,274. The response and the log carry
+  a new field, `n_tokens_exact: false`, to say so. `truncated` is still
+  right. That is the trade: an exact count nobody used, for 750 ms.
+- **The fix does not cover every long input.** A 900,000-character string
+  with no spaces is one giant word, which tokenizes to 3 tokens, so the head
+  is not over the limit and the code falls back to tokenizing everything.
+  That took about 500 ms when I tried it. Criterion 3's article has spaces,
+  so the criterion does not see this.
+
+**The Second Improvement** (stretch)
+
+*What I changed:* `serve.py` now classifies one throwaway string after
+loading the model and before it starts listening, and records how long that
+took as `warmup_ms` in the `startup` record.
+
+*Which diagnosis pointed at it:* the other half of criterion 3. The first
+pass through the model costs about 210 ms once, and it was being paid by
+whoever called first.
+
+`python capstone_eval.py --label after2`, results in
+`capstone_results_after2.json`, logs in `logs/eval_after2_trial<N>.jsonl`.
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Endpoint as accurate as the notebook | 30 of 34 | 30/34 | 30/34 | 30/34 | MET |
+| 2. Every label's recall through the endpoint | ≥ 0.60 | 0.40 lowest (`None of These`) | 0.40 lowest (`None of These`) | 0.40 lowest (`None of These`) | MISSED |
+| 3. No classified request over 100 ms | 35 of 35 | 35/35 | 35/35 | 35/35 | MET |
+| 4. Log agrees with what was sent, 10 at a time | 50 of 50 | 50/50 | 50/50 | 50/50 | MET |
+| 5. Bad request refused within 5 s, server still up | 14 of 14, then 200 | 12/14, then 200 | 12/14, then 200 | 12/14, then 200 | MISSED |
+
+The `startup` record and the first request, from
+`logs/eval_after2_trial1.jsonl`:
+
+```json
+{"ts": "2026-11-12T01:14:23.166+00:00", "event": "startup", "host": "127.0.0.1", "port": 8765, "status": "ok", "device": "cuda", "labels": ["Business", "Economy", "Administrative", "None of These"], "max_length": 128, "model_seed": 42, "model_trained_at": "2026-11-12T00:44:50+00:00", "model_load_ms": 4626.8, "warmup_ms": 211.1, "error": null}
+{"ts": "2026-11-12T01:14:23.299+00:00", "request_id": "267cfc76d3f4", "event": "request", "method": "POST", "path": "/classify", "status": "ok", "http_status": 200, "input_chars": 240, "input_preview": "Bitcoin Miner Fees Fall to Just 0.64% of Revenue, Analyst Says. Transaction fees averaged just 0.64% of Bitcoin miner revenue in the last 30 days, according to ", "n_tokens": 67, "n_tokens_exact": true, "truncated": false, "label": "Business", "confidence": 0.9269, "scores": {"Business": 0.9269, "Economy": 0.0222, "Administrative": 0.0193, "None of These": 0.0316}, "tokenize_ms": 0.89, "model_ms": 5.39, "duration_ms": 6.37, "error": null}
+```
+
+*Did it help:* yes. The first request went from about 211 ms to about 6 ms,
+and criterion 3 is MET in all three trials, with the slowest classified
+request at 7.38 / 8.33 / 7.41 ms. The trade is that the cost moved; it did
+not go away. Start-up is now about 210 ms longer
+(4.6 s to load the model, then 210 ms of
+warm-up), paid once when nobody is waiting. Criterion 5 was back to 12 of
+14 in all three trials, which fits the 1 MB failure being a race and not
+something the first change broke.
+
+**Latency Breakdown** (stretch)
+
+Where the time goes in one request, from the `tokenize_ms`, `model_ms` and
+`duration_ms` fields in the three `logs/eval_after2_trial<N>.jsonl` files.
+Each figure is the mean of the three trials. "Everything else" is
+`duration_ms` minus the two stages: reading the body, parsing the JSON,
+waiting for the model lock, and sending the answer.
+
+| Requests | Whole request, ms | Tokenizer | Model | Everything else |
+|---|---|---|---|---|
+| 34 held-out posts, one at a time | 4.42 | 0.84 (19%) | 3.51 (79%) | 0.07 (2%) |
+| 40 held-out posts, 10 at a time | 18.76 | 0.78 (4%) | 3.61 (19%) | 14.37 (77%) |
+| The 900,000-character article | 7.71 | 2.82 (37%) | 3.82 (50%) | 1.07 (14%) |
+
+One at a time, the model is most of a request and the HTTP handling is
+almost nothing. Ten at a time, each request does the same work in the
+tokenizer and the model but takes about four times as long, and nearly all
+of the extra is "everything else". That is requests queuing for
+`model_lock`: the server answers on ten threads but only one can use the
+model at once. So under load the model is not the slow stage. Waiting for
+it is.
+
+**What It Costs — after the improvements**
+
+The number in What It Costs above (25.86 ms) was measured before either
+improvement, and most of it was the slow first request. Measured the same
+way on the final code, the `duration_ms` of the first ten requests in
+`logs/eval_after2_trial1.jsonl`:
+
+| Request | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `duration_ms` | 6.37 | 5.03 | 4.15 | 4.41 | 4.18 | 4.58 | 4.18 | 4.11 | 4.31 | 4.48 |
+
+Sum 45.80 ms ÷ 10 = **4.58 ms (0.0046 s) per run.**
+
+For a hundred people a day, at one article each: 100 × 0.0046 s =
+**0.46 s of compute a day**, plus 4.6 s to load the model
+and 0.21 s to warm it each time the server is started. It is
+seconds of my own laptop's GPU, not money. I did not measure it on a CPU.
+
+**What's Still Broken**
+
+Two criteria are still missed.
+
+*2. Every label's recall ≥ 0.60 — missed (`None of These` 0.40 in every
+trial).*
+What I'd do: what unit 6 already says. Give `None of These` something
+positive to learn, by splitting elections and campaigns out of it, and add
+articles to the three small labels.
+Why I stopped: I ruled it out of scope at the start. It is a relabelling
+and a retraining, and this unit was about the endpoint. The endpoint cannot
+improve a label the model did not learn.
+
+*5. Bad requests refused within 5 s — missed (12 of 14 at best).* Three
+mechanisms, all in how `serve.py` reads a request:
+
+- A body shorter than its `Content-Length` gets no answer. I'd set a read
+  timeout on the handler so a stalled body is answered with a 408.
+- JSON nested 100,000 deep gets a 500. I'd catch `RecursionError` in
+  `_read_json_body` and answer 400.
+- A body over 1 MB sometimes gets a connection reset in place of its 413.
+  I'd read and discard the body before closing, up to a limit.
+
+Why I stopped: the unit allows one improvement, and I added one more as a
+declared stretch. I spent both on criterion 3, because one of its two misses
+slowed every other caller. No single change would have turned criterion 5
+to MET, since it has three separate mechanisms.
+
+*Things no criterion caught:*
+
+- A 900,000-character string with no spaces still takes about 500 ms.
+- When the short-body request hangs, the log records a 400 that the caller
+  never received. Criterion 4 passed because none of its 50 requests was
+  that kind.
+- A server that is killed leaves no `shutdown` record.
+- I have not run any of this on a CPU, and I tested `RUNNING.md` from a
+  clean clone using my existing virtual environment, not a fresh
+  `pip install`.
+
+*Targets that were set too low.* Criteria 1 and 4 were met in every run.
+Criterion 1 could only fail if the serving code was wrong, and it is useful
+as a guard, but it was never going to teach me anything. Criterion 4 I
+would tighten: 200 requests, 50 at a time, with the short-body and
+oversized requests in the mix, and the log read without a one-second wait.
+Criterion 3 is now met with a slowest request of about 8 ms, so 100 ms is
+loose. I'd tighten it to 25 ms and apply it to the requests sent 10 at a
+time as well, which average 14 to 20 ms and would not all pass.
+
+*What I'd do first with another unit:* put a read timeout on the request
+handler. It is the only remaining miss where one caller can hold a server
+thread for as long as they like, and it is also the case where my log says
+something that did not happen.
+
+**How I Used AI**
+
+I used Claude (in Claude Code) for most of the work in this unit, and I am
+listing it plainly.
+
+*Moment 1 — the extension.* I chose project 3 and shape C and asked it to
+carry out the capstone. It read the repo, pointed out that the notebook
+never saved the model, and proposed the `POST /classify` endpoint as the one
+capability. It wrote `train.py`, `classify.py`, `serve.py`, `runlog.py`,
+`send.py` and `capstone_eval.py`. While testing it found a bug in its own
+code: on Windows a second `serve.py` could bind a port that was already in
+use, and it fixed that before the criteria were written.
+
+*Moment 2 — the criteria.* The brief says not to ask a model to write
+these. I asked it to take my unit 5 criteria and modify them, and it did:
+each capstone criterion names the unit 5 criterion it came from. The
+targets and reasons in `criteria.md` under "Capstone criteria" were drafted
+by AI from my earlier ones, and committed before any test was run.
+
+*Moment 3 — the testing and write-up.* It ran the three trials, wrote the
+diagnoses from the log records, chose and made the two improvements, and
+drafted these README sections. When criterion 5 came out worse after the
+first improvement, it sent the failing request 60 more times to check
+whether the change had caused it before writing that up.
+
+<!-- TODO before submitting: add what YOU changed or decided after reading
+     the AI's work, e.g. a target or reason you rewrote in criteria.md. -->
