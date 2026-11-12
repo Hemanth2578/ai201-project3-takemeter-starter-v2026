@@ -173,3 +173,121 @@ when accuracy looks fine.
      A number you missed stays where it is, gets diagnosed, and gets a fix
      attempted. That's where the points are.
      ───────────────────────────────────────────────────────────────────────── -->
+
+---
+
+# Capstone criteria
+
+Five criteria for the capstone extension, the `POST /classify` endpoint,
+written before any capstone test was run. The five above are units 5 and 6
+and are not changed.
+
+These are my unit 5 criteria carried over to the new thing. Each one says
+which old criterion it came from and what changed.
+
+**A trial** is one fresh start of `serve.py` followed by the whole set of
+requests. There are three trials, and a target has to hold in all three.
+
+**What I had already seen when I wrote these.** Milestone 3 comes before
+this one, so the log in the README existed first. From it I knew: the first
+10 held-out posts came back 9 of 10 correct, the first request after
+start-up took 218 ms and the next nine took 4 to 5 ms, and the 11 bad
+requests in `send.py --bad` were each refused once. Where a criterion below
+leans on one of those numbers, it says so.
+
+---
+
+## 1. The endpoint is as accurate as the notebook
+
+*From criterion 2 (overall accuracy at least 0.65).*
+
+When each of the 34 posts in `test_split.csv` is sent to `POST /classify`,
+at least **30 of 34** returned labels equal the label in `test_split.csv`,
+in every trial.
+
+**Why this target:** 30 of 34 is 0.882, the accuracy `results.json` records
+for the seed-42 model, and the endpoint serves that same model. So it should
+not lose a single post. A 29 would mean the serving path treats text
+differently from training: a different tokenizer setting, a different cut at
+128 tokens, or the labels in a different order. My old target of 0.65 is too
+loose here, because it would let the endpoint lose seven posts without
+failing. It is not stricter than 30 because the model itself only gets 30.
+
+---
+
+## 2. Every label's recall through the endpoint is at least 0.60
+
+*Criterion 4, target unchanged. This one is about the system as it already
+worked.*
+
+Over the same 34 posts, each of the four labels has a recall of at least
+**0.60** (at least 3 of every 5 of its posts returned with the right label),
+in every trial.
+
+**Why this target:** the same reason as before, and one more. Someone
+calling an endpoint does not know which label is the weak one, so a label
+that is right 2 times in 5 is a wrong answer they cannot see coming. Unit 6
+missed this on seed 42 (`None of These` 0.40), and I am not retraining in
+this unit, so I expect to miss it again. I am keeping 0.60 anyway. Lowering
+a target because I missed it is not a revision.
+
+---
+
+## 3. No classified request takes more than 100 ms
+
+*From criterion 5 (no label predicted for more than 59% of posts): a cap on
+the worst case, not on the average.*
+
+Every request answered with a 200 has a `duration_ms` of at most **100** in
+the log. That means any request, including the first one after start-up.
+The set is the 34 held-out posts, sent first, then one article of 900,000
+characters, which is just under the 1 MB limit the endpoint accepts:
+**35 of 35**, in every trial.
+
+**Why this target:** a warm request took 4 to 5 ms in my Milestone 3 log, so
+100 ms is twenty times that, and about where an answer stops feeling
+instant. It is a cap on every request and not an average for the reason
+criterion 5 was: an average looked fine in unit 6 while the model guessed
+`Business` for everything. A caller gets one request, not the mean of ten.
+I already know the first request took 218 ms in Milestone 3, so I expect
+that one to miss. I do not know what the 900,000-character article will do.
+I have never sent anything that long.
+
+---
+
+## 4. The log agrees with what was sent
+
+*From criterion 3 (another labeller agrees with my labels at least 70% of
+the time).*
+
+50 requests are sent 10 at a time: 40 held-out posts and 10 bad requests.
+Every one gets an HTTP response, and the log holds exactly one record for
+each, whose `request_id`, `http_status` and `label` equal what the caller
+was sent: **50 of 50**, in every trial.
+
+**Why this target:** 70% was right for two people judging articles. A log
+is bookkeeping, and one missing record is one request I can never diagnose,
+so the target is all of them. It is tested 10 at a time because the server
+answers each request on its own thread and they all write to one file. That
+is where a record could be lost or two could run together. In Milestone 3 I
+only ever sent one request at a time.
+
+---
+
+## 5. A bad request is refused, not crashed on
+
+*New. My unit 5 criteria had nothing about a bad path.*
+
+14 bad requests are sent: the 11 in `send.py --bad`, plus a body that is not
+valid UTF-8, a body shorter than its `Content-Length` says, and JSON nested
+100,000 levels deep. Each one gets a 4xx answer with a JSON body containing
+`error` within **5 seconds**, none gets a 5xx or no answer at all, and a
+normal request sent afterwards still returns 200: **14 of 14** and the
+follow-up, in every trial.
+
+**Why this target:** a bad request is the caller's mistake, and a 500 tells
+them it was mine. A request that never gets an answer is worse, because it
+holds a server thread for as long as the caller waits. Five seconds is very
+generous beside a 5 ms request, so a miss means a hang and not a slow
+answer. The 11 from `send.py` were each refused once in Milestone 3. The
+other three I have never tried.
